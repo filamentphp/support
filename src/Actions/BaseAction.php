@@ -14,6 +14,7 @@ abstract class BaseAction extends ViewComponent
     use Concerns\HasIcon;
     use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\HasSize;
     use Conditionable;
     use HasExtraAttributes;
 
