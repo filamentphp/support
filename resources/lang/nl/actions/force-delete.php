@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Hapus',
+        'label' => 'Geforceerd verwijderen',
 
         'modal' => [
 
-            'heading' => 'Hapus :label',
+            'heading' => ':Label geforceerd verwijderen',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus',
+                    'label' => 'Verwijderen',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+            'deleted' => 'Verwijderd',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Hapus yang dipilih',
+        'label' => 'Geselecteerde geforceerd verwijderen',
 
         'modal' => [
 
-            'heading' => 'Hapus :label yang dipilih',
+            'heading' => 'Geselecteerde :label geforceerd verwijderen',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus yang dipilih',
+                    'label' => 'Verwijderen',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+            'deleted' => 'Verwijderd',
         ],
 
     ],

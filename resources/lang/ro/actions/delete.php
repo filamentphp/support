@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Hapus',
+        'label' => 'Ștergere',
 
         'modal' => [
 
-            'heading' => 'Hapus :label',
+            'heading' => 'Ștergere :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus',
+                    'label' => 'Șterger',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+            'deleted' => 'Șters cu succes',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Hapus yang dipilih',
+        'label' => 'Ștergeți înregistrările selectate',
 
         'modal' => [
 
-            'heading' => 'Hapus :label yang dipilih',
+            'heading' => 'Ștergeți :label selectate',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus yang dipilih',
+                    'label' => 'Ștergere',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+            'deleted' => 'Șters cu succes',
         ],
 
     ],

@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Bewerken',
+        'label' => 'Szerkesztés',
 
         'modal' => [
 
-            'heading' => ':Label bewerken',
+            'heading' => ':label szerkesztése',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Opslaan',
+                    'label' => 'Mentés',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Opgeslagen',
+            'saved' => 'Mentve',
         ],
 
     ],

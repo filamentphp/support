@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Hapus',
+        'label' => 'Törlés mindenképp',
 
         'modal' => [
 
-            'heading' => 'Hapus :label',
+            'heading' => ':label törlése mindenképp',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus',
+                    'label' => 'Törlés',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+            'deleted' => 'Törölve',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Hapus yang dipilih',
+        'label' => 'A kiválasztottak törlése mindenképp',
 
         'modal' => [
 
-            'heading' => 'Hapus :label yang dipilih',
+            'heading' => 'A kiválasztott :label törlése mindenképp',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus yang dipilih',
+                    'label' => 'Törlés',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+            'deleted' => 'Elemek törölve',
         ],
 
     ],

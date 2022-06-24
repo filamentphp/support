@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Koppelen',
+        'label' => 'Társítás',
 
         'modal' => [
 
-            'heading' => ':Label koppelen',
+            'heading' => ':label társítása',
 
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Records',
+                    'label' => 'Elemek',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Koppelen',
+                    'label' => 'Társítás',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Koppelen & nieuwe koppelen',
+                    'label' => 'Társítás és új társítása',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Gekoppeld',
+            'associated' => 'Társítva',
         ],
 
     ],

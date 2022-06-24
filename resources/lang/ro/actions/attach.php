@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Koppelen',
+        'label' => 'Atașare',
 
         'modal' => [
 
-            'heading' => ':Label koppelen',
+            'heading' => 'Atașare :label',
 
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Records',
+                    'label' => 'Înregistrări',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Koppelen',
+                    'label' => 'Atașare',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Koppelen & nieuwe koppelen',
+                    'label' => 'Atașați și atașați altul',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Gekoppeld',
+            'attached' => 'Atașat cu succes',
         ],
 
     ],

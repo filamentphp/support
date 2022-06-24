@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Koppelen',
+        'label' => 'Csatolás',
 
         'modal' => [
 
-            'heading' => ':Label koppelen',
+            'heading' => ':label csatolása',
 
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Records',
+                    'label' => 'Elemek',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Koppelen',
+                    'label' => 'Csatolás',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Koppelen & nieuwe koppelen',
+                    'label' => 'Csatolás és új csatolása',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Gekoppeld',
+            'attached' => 'Csatolva',
         ],
 
     ],

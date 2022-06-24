@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dupliquer',
+        'label' => 'Duplikálás',
 
         'modal' => [
 
-            'heading' => 'Dupliquer :label',
+            'heading' => ':label duplikálása',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Dupliquer',
+                    'label' => 'Duplikálás',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'replicated' => 'Enregistrement dupliqué',
+            'replicated' => 'Duplikálva',
         ],
 
     ],

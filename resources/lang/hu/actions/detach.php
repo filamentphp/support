@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Ontkoppelen',
+        'label' => 'Leválasztás',
 
         'modal' => [
 
-            'heading' => ':Label ontkoppelen',
+            'heading' => ':label leválasztása',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Ontkoppelen',
+                    'label' => 'Leválasztás',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ontkoppeld',
+            'detached' => 'Leválasztva',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Geselecteerde ontkoppelen',
+        'label' => 'Kiválasztottak leválasztása',
 
         'modal' => [
 
-            'heading' => 'Geselecteerde :label ontkoppelen',
+            'heading' => 'Kiválasztott :label leválasztása',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Ontkoppelen',
+                    'label' => 'Kiválasztottak leválasztása',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ontkoppeld',
+            'detached' => 'Leválasztva',
         ],
 
     ],

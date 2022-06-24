@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Koppelen',
+        'label' => 'Asociere',
 
         'modal' => [
 
-            'heading' => ':Label koppelen',
+            'heading' => 'Asociere :label',
 
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Records',
+                    'label' => 'Înregistrări',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Koppelen',
+                    'label' => 'Asociere',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Koppelen & nieuwe koppelen',
+                    'label' => 'Asociați și asociați altul',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Gekoppeld',
+            'associated' => 'Asociat cu succes',
         ],
 
     ],

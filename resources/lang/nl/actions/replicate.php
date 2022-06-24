@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dupliquer',
+        'label' => 'Dupliceren',
 
         'modal' => [
 
-            'heading' => 'Dupliquer :label',
+            'heading' => ':Label dupliceren',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Dupliquer',
+                    'label' => 'Dupliceren',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'replicated' => 'Enregistrement dupliqué',
+            'replicated' => 'Gedupliceerd',
         ],
 
     ],

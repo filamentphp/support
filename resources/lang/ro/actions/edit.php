@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Bewerken',
+        'label' => 'Editare',
 
         'modal' => [
 
-            'heading' => ':Label bewerken',
+            'heading' => 'Editare :label',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Opslaan',
+                    'label' => 'Salvare',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Opgeslagen',
+            'saved' => 'Salvat cu succes',
         ],
 
     ],

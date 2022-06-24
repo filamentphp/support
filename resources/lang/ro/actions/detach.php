@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Ontkoppelen',
+        'label' => 'Detașare',
 
         'modal' => [
 
-            'heading' => ':Label ontkoppelen',
+            'heading' => 'Detașare :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Ontkoppelen',
+                    'label' => 'Detașare',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ontkoppeld',
+            'detached' => 'Detașat cu succes',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Geselecteerde ontkoppelen',
+        'label' => 'Detașați înregistrările selectate',
 
         'modal' => [
 
-            'heading' => 'Geselecteerde :label ontkoppelen',
+            'heading' => 'Detașați :label selectate',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Ontkoppelen',
+                    'label' => 'Detașați înregistrările selectate',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ontkoppeld',
+            'detached' => 'Detașat cu succes',
         ],
 
     ],

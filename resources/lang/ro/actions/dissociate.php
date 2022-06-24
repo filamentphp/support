@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Pisahkan',
+        'label' => 'Disociere',
 
         'modal' => [
 
-            'heading' => 'Pisahkan :label',
+            'heading' => 'Disociere :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Pisahkan',
+                    'label' => 'Disociere',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Pisahkan',
+            'dissociated' => 'Disociat cu succes',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Pisahkan yang dipilih',
+        'label' => 'Disociați înregistrările selectate',
 
         'modal' => [
 
-            'heading' => 'Pisahkan :label yang dipilih',
+            'heading' => 'Disociați :label selectate',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Pisahkan yang dipilih',
+                    'label' => 'Disociați înregistrările selectate',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Data berhasil dipisahkan',
+            'dissociated' => 'Disociat cu succes',
         ],
 
     ],

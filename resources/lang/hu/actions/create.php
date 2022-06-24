@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'Aanmaken',
+        'label' => 'Új :label',
 
         'modal' => [
 
-            'heading' => ':Label aanmaken',
+            'heading' => 'Új :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Aanmaken',
+                    'label' => 'Hozzáadás',
                 ],
 
                 'create_another' => [
-                    'label' => 'Aanmaken & nieuwe aanmaken',
+                    'label' => 'Hozzáadás és új hozzáadása',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Aangemaakt',
+            'created' => 'Hozzáadva',
         ],
 
     ],

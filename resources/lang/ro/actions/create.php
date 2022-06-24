@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'Aanmaken',
+        'label' => 'Adăugare :label',
 
         'modal' => [
 
-            'heading' => ':Label aanmaken',
+            'heading' => 'Creare :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Aanmaken',
+                    'label' => 'Creare',
                 ],
 
                 'create_another' => [
-                    'label' => 'Aanmaken & nieuwe aanmaken',
+                    'label' => 'Creați și creați altul',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Aangemaakt',
+            'created' => 'Creat cu succes',
         ],
 
     ],
