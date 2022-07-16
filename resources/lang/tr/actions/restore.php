@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Restore',
+        'label' => 'Geri yükle',
 
         'modal' => [
 
-            'heading' => 'Restore :label',
+            'heading' => ':label geri yükle',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Geri yükle',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Restored',
+            'restored' => 'Kayıt geri yüklendi',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Restore selected',
+        'label' => 'Seçiliyi geri yükle',
 
         'modal' => [
 
-            'heading' => 'Restore selected :label',
+            'heading' => ':label seçiliyi geri yükle',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Geri yükle',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Restored',
+            'restored' => 'Kayıtlar geri yüklendi',
         ],
 
     ],
