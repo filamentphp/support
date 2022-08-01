@@ -20,6 +20,7 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-support')
+            ->hasCommand(Commands\UpgradeCommand::class)
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
@@ -40,7 +41,7 @@ class SupportServiceProvider extends PackageServiceProvider
     public function packageBooted()
     {
         Blade::directive('captureSlots', function (string $expression): string {
-            return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->toArray(); unset(\$slotContents) ?>";
+            return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
         });
 
         Str::macro('sanitizeHtml', function (string $html): string {
@@ -52,7 +53,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
-        if (class_exists(AboutCommand::class)) {
+        if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
             $packages = [
                 'filament',
                 'forms',
@@ -67,7 +68,8 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
                     ->join(', '),
                 'Views' => function () use ($packages): string {
-                    $publishedViewPaths = collect($packages)->filter(fn (string $package): bool => is_dir(resource_path("views/vendor/{$package}")));
+                    $publishedViewPaths = collect($packages)
+                        ->filter(fn (string $package): bool => is_dir(resource_path("views/vendor/{$package}")));
 
                     if (! $publishedViewPaths->count()) {
                         return '<fg=green;options=bold>NOT PUBLISHED</>';
