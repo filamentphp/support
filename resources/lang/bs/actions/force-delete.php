@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Xóa',
+        'label' => 'Konačno izbrisat',
 
         'modal' => [
 
-            'heading' => 'Xóa :label',
+            'heading' => 'Konačno izbrisati :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Xóa',
+                    'label' => 'Izbrasiti',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Đã xóa',
+            'deleted' => 'Zapis izbrisan',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Xoá các mục đã chọn',
+        'label' => 'Izabrani konačno izbrisati',
 
         'modal' => [
 
-            'heading' => 'Xóa các mục :label đã chọn',
+            'heading' => 'Konačno izbrisati izabrani :label ',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Xóa',
+                    'label' => 'Izbrisati',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Đã xóa',
+            'deleted' => 'Zapisi izbrisani',
         ],
 
     ],
