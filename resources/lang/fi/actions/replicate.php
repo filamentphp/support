@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Duplikovat',
+        'label' => 'Monista',
 
         'modal' => [
 
-            'heading' => 'Duplikovat :label',
+            'heading' => 'Monista :label',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Duplikovat',
+                    'label' => 'Monista',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'replicated' => 'Záznam duplikován',
+            'replicated' => 'Tietue monistettu',
         ],
 
     ],
