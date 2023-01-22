@@ -1,44 +1,77 @@
 @props([
     'color' => 'primary',
-    'darkMode' => false,
     'detail' => null,
+    'disabled' => false,
     'icon' => null,
+    'iconSize' => 'md',
+    'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
-    'type' => 'button',
 ])
 
 @php
     $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item filament-dropdown-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm',
-        'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
-        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
-        'hover:bg-success-500 focus:bg-success-500' => $color === 'success' && $hasHoverAndFocusState,
-        'hover:bg-warning-500 focus:bg-warning-500' => $color === 'warning' && $hasHoverAndFocusState,
+        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100 disabled:opacity-70 disabled:pointer-events-none',
+        'opacity-70 pointer-events-none' => $disabled,
+        ...$hasHoverAndFocusState
+            ? [
+                'focus:outline-none hover:text-white focus:text-white',
+                match ($color) {
+                    'danger' => 'hover:bg-danger-500 focus:bg-danger-500',
+                    'gray', null => 'hover:bg-gray-500 focus:bg-gray-500',
+                    'primary' => 'hover:bg-primary-500 focus:bg-primary-500',
+                    'secondary' => 'hover:bg-secondary-500 focus:bg-secondary-500',
+                    'success' => 'hover:bg-success-500 focus:bg-success-500',
+                    'warning' => 'hover:bg-warning-500 focus:bg-warning-500',
+                    default => $color,
+                },
+            ]
+            : [],
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
-        'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
-        'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
-        'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
+        match ($hasHoverAndFocusState) {
+            true => match ($color) {
+                'danger' => 'group-hover:text-danger-100 group-focus:text-danger-100',
+                'gray', null => 'group-hover:text-gray-100 group-focus:text-gray-100',
+                'primary' => 'group-hover:text-primary-100 group-focus:text-primary-100',
+                'secondary' => 'group-hover:text-secondary-100 group-focus:text-secondary-100',
+                'success' => 'group-hover:text-success-100 group-focus:text-success-100',
+                'warning' => 'group-hover:text-warning-100 group-focus:text-warning-100',
+                default => $color,
+            },
+            false => null,
+        },
     ]);
 
     $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
 
+    $iconColor = match ($color) {
+        'danger' => 'text-danger-500',
+        'gray' => 'text-gray-500',
+        'primary' => 'text-primary-500',
+        'secondary' => 'text-secondary-500',
+        'success' => 'text-success-500',
+        'warning' => 'text-warning-500',
+        default => $color,
+    };
+
+    $iconSize = match ($iconSize) {
+        'sm' => 'h-4 w-4',
+        'md' => 'h-5 w-5',
+        'lg' => 'h-6 w-6',
+        default => $iconSize,
+    };
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',
+        'filament-dropdown-list-item-icon flex-shrink-0 mr-2 rtl:ml-2 rtl:mr-0',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
-        'text-primary-500' => $color === 'primary',
-        'text-danger-500' => $color === 'danger',
-        'text-gray-500' => $color === 'secondary',
-        'text-success-500' => $color === 'success',
-        'text-warning-500' => $color === 'warning',
     ]);
+
+    $imageClasses = 'filament-dropdown-list-item-image flex-shrink-0 h-5 w-5 rounded-full bg-gray-200 bg-cover bg-center mr-2 dark:bg-gray-900 rtl:ml-2 rtl:mr-0';
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
 
@@ -48,28 +81,40 @@
 @endphp
 
 @if ($tag === 'button')
-    <button
-        type="{{ $type }}"
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-        {{ $attributes->class([$buttonClasses]) }}
-    >
+    <button {{ $attributes
+        ->merge([
+            'disabled' => $disabled,
+            'type' => 'button',
+            'wire:loading.attr' => 'disabled',
+            'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+        ], escape: false)
+        ->class([$buttonClasses])
+    }}>
         @if ($icon)
-            <x-dynamic-component
-                :component="$icon"
-                :wire:loading.remove.delay="$hasLoadingIndicator"
-                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+            <x-filament::icon
+                :name="$icon"
+                alias="support::dropdown.list.item"
+                :color="$iconColor"
+                :size="$iconSize"
                 :class="$iconClasses"
+                :wire:loading.remove.delay="$hasLoadingIndicator"
+                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
             />
         @endif
 
+        @if ($image)
+            <div
+                class="{{ $imageClasses }}"
+                style="background-image: url('{{ $image }}')"
+            ></div>
+        @endif
+
         @if ($hasLoadingIndicator)
-            <x-filament-support::loading-indicator
-                x-cloak
-                wire:loading.delay
+            <x-filament::loading-indicator
+                x-cloak=""
+                wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses"
+                :class="$iconClasses . ' ' . $iconColor . ' ' . $iconSize"
             />
         @endif
 
@@ -86,7 +131,20 @@
 @elseif ($tag === 'a')
     <a {{ $attributes->class([$buttonClasses]) }}>
         @if ($icon)
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :name="$icon"
+                alias="support::dropdown.list.item"
+                :color="$iconColor"
+                :size="$iconSize"
+                :class="$iconClasses"
+            />
+        @endif
+
+        @if ($image)
+            <div
+                class="{{ $imageClasses }}"
+                style="background-image: url('{{ $image }}')"
+            ></div>
         @endif
 
         <span class="{{ $labelClasses }}">
@@ -108,7 +166,13 @@
             {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
         >
             @if ($icon)
-                <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                <x-filament::icon
+                    :name="$icon"
+                    alias="support::dropdown.list.item"
+                    :color="$iconColor"
+                    :size="$iconSize"
+                    :class="$iconClasses"
+                />
             @endif
 
             <span class="{{ $labelClasses }}">

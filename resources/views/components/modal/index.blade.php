@@ -3,18 +3,17 @@
     'ariaLabelledby' => null,
     'closeButton' => true,
     'closeEventName' => 'close-modal',
-    'darkMode' => false,
     'displayClasses' => 'inline-block',
     'footer' => null,
     'header' => null,
     'heading' => null,
-    'headingComponent' => 'filament-support::modal.heading',
-    'hrComponent' => 'filament-support::hr',
+    'headingComponent' => 'filament::modal.heading',
+    'hrComponent' => 'filament::hr',
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
     'subheading' => null,
-    'subheadingComponent' => 'filament-support::modal.subheading',
+    'subheadingComponent' => 'filament::modal.subheading',
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
@@ -65,14 +64,14 @@
         x-transition:leave="ease duration-300"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        x-cloak
+        x-cloak=""
         @class([
             'fixed inset-0 z-40 min-h-screen overflow-y-auto overflow-x-hidden transition',
             'flex items-center' => ! $slideOver,
         ])
     >
         <div
-            @if (config('filament-support.modal.is_closed_by_clicking_away', true))
+            @if (\Filament\Support\View\Components\Modal::$isClosedByClickingAway)
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
@@ -82,7 +81,7 @@
             aria-hidden="true"
             @class([
                 'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
-                'cursor-pointer' => config('filament-support.modal.is_closed_by_clicking_away', true)
+                'cursor-pointer' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
             ])
         ></div>
 
@@ -107,16 +106,15 @@
                 x-transition:leave-end="translate-y-8"
             @endif
             x-ref="modalContainer"
-            x-cloak
+            x-cloak=""
             {{ $attributes->class([
-                'relative w-full cursor-pointer pointer-events-none',
+                'relative w-full pointer-events-none',
                 'my-auto p-4' => ! $slideOver,
             ]) }}
         >
             <div
                 @class([
-                    'filament-modal-window w-full py-2 bg-white cursor-default pointer-events-auto',
-                    'dark:bg-gray-800' => $darkMode,
+                    'filament-modal-window w-full py-2 bg-white cursor-default pointer-events-auto dark:bg-gray-800',
                     'relative' => $width !== 'screen',
                     'h-screen overflow-y-auto ml-auto mr-0 rtl:mr-auto rtl:ml-0' => $slideOver,
                     'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
@@ -146,9 +144,14 @@
                             x-on:click="close()"
                         @endif
                     >
-                        <x-heroicon-s-x
-                            class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
-                            title="__('filament-support::components/modal.actions.close.label')"
+                        <x-filament::icon
+                            name="heroicon-m-x-mark"
+                            alias="support::modal.close-button"
+                            color="text-gray-400"
+                            size="h-5 w-5"
+                            class="filament-modal-close-button cursor-pointer"
+                            :title="__('filament-support::components/modal.actions.close.label')"
+                            x-on:click="close()"
                             tabindex="-1"
                         />
 
@@ -183,9 +186,8 @@
                     >
                         @if ($heading || $subheading)
                             <div @class([
-                                'p-4 space-y-2',
+                                'p-4 space-y-2 dark:text-white',
                                 'text-center' => ! $slideOver,
-                                'dark:text-white' => $darkMode,
                             ])>
                                 @if ($heading)
                                     <x-dynamic-component

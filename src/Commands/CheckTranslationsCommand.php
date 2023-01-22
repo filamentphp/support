@@ -18,7 +18,7 @@ class CheckTranslationsCommand extends Command
 
     protected $description = 'Checks for missing and removed translations.';
 
-    public function handle()
+    public function handle(): int
     {
         $this->scan('filament');
         $this->scan('forms');
@@ -29,7 +29,7 @@ class CheckTranslationsCommand extends Command
         return self::SUCCESS;
     }
 
-    protected function scan(string $package)
+    protected function scan(string $package): void
     {
         $localeRootDirectory = match ($source = $this->option('source')) {
             'app' => lang_path("vendor/{$package}"),
@@ -44,7 +44,7 @@ class CheckTranslationsCommand extends Command
         }
 
         collect($filesystem->directories($localeRootDirectory))
-            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) Str::of($directory)->afterLast(DIRECTORY_SEPARATOR)])
+            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) str($directory)->afterLast(DIRECTORY_SEPARATOR)])
             ->when(
                 $locales = $this->argument('locales'),
                 fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))
@@ -58,7 +58,7 @@ class CheckTranslationsCommand extends Command
                         $actualKeys = require $file->getPathname();
 
                         return [
-                            (string) Str::of($file->getPathname())->after("{$localeDir}/") => [
+                            (string) str($file->getPathname())->after("{$localeDir}/") => [
                                 'missing' => array_keys(array_diff_key(
                                     Arr::dot($expectedKeys),
                                     Arr::dot($actualKeys)
@@ -71,9 +71,7 @@ class CheckTranslationsCommand extends Command
                         ];
                     })
                     ->tap(function (Collection $files) use ($locale, $package) {
-                        /** @phpstan-ignore-next-line */
                         $missingKeysCount = $files->sum(fn ($file): int => count($file['missing']));
-                        /** @phpstan-ignore-next-line */
                         $removedKeysCount = $files->sum(fn ($file): int => count($file['removed']));
 
                         $locale = locale_get_display_name($locale, 'en');

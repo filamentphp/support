@@ -8,32 +8,46 @@ trait EvaluatesClosures
 {
     protected string $evaluationIdentifier;
 
+    /**
+     * @var array<string>
+     */
     protected array $evaluationParametersToRemove = [];
 
-    public function evaluate($value, array $parameters = [], array $exceptParameters = [])
+    /**
+     * @template T
+     *
+     * @param  T | callable(): T  $value
+     * @param  array<string, mixed>  $parameters
+     * @param  array<string>  $exceptParameters
+     * @return T
+     */
+    public function evaluate(mixed $value, array $parameters = [], array $exceptParameters = []): mixed
     {
-        $this->evaluationParametersToRemove = $exceptParameters;
-
-        if ($value instanceof Closure) {
-            return app()->call(
-                $value,
-                array_merge(
-                    isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
-                    $this->getDefaultEvaluationParameters(),
-                    $parameters,
-                ),
-            );
+        if (! $value instanceof Closure) {
+            return $value;
         }
 
-        return $value;
+        $this->evaluationParametersToRemove = $exceptParameters;
+
+        return app()->call(
+            $value,
+            array_merge(
+                isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
+                $this->getDefaultEvaluationParameters(),
+                $parameters,
+            ),
+        );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return [];
     }
 
-    protected function resolveEvaluationParameter(string $parameter, Closure $value)
+    protected function resolveEvaluationParameter(string $parameter, Closure $value): mixed
     {
         if ($this->isEvaluationParameterRemoved($parameter)) {
             return null;

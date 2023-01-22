@@ -1,11 +1,13 @@
 @props([
     'color' => 'primary',
-    'darkMode' => false,
     'disabled' => false,
     'form' => null,
     'icon' => null,
-    'keyBindings' => null,
+    'iconAlias' => null,
+    'iconSize' => null,
     'indicator' => null,
+    'indicatorColor' => 'primary',
+    'keyBindings' => null,
     'label' => null,
     'size' => 'md',
     'tag' => 'button',
@@ -14,35 +16,49 @@
 ])
 
 @php
+    $iconSize ??= $size;
+
     $buttonClasses = [
-        'filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none',
-        'text-primary-500 focus:bg-primary-500/10' => $color === 'primary',
-        'text-danger-500 focus:bg-danger-500/10' => $color === 'danger',
-        'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
-        'text-success-500 focus:bg-success-500/10' => $color === 'success',
-        'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
-        'dark:hover:bg-gray-300/5' => $darkMode,
-        'w-10 h-10' => $size === 'md',
-        'w-8 h-8' => $size === 'sm',
-        'w-8 h-8 md:w-10 md:h-10' => $size === 'sm md:md',
-        'w-12 h-12' => $size === 'lg',
+        'filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none disabled:opacity-70 disabled:pointer-events-none dark:hover:bg-gray-300/5',
+        match ($color) {
+            'danger' => 'text-danger-500 focus:bg-danger-500/10',
+            'gray' => 'text-gray-500 focus:bg-gray-500/10',
+            'primary' => 'text-primary-500 focus:bg-primary-500/10',
+            'secondary' => 'text-secondary-500 focus:bg-secondary-500/10',
+            'success' => 'text-success-500 focus:bg-success-500/10',
+            'warning' => 'text-warning-500 focus:bg-warning-500/10',
+            default => $color,
+        },
+        match ($size) {
+            'sm' => 'w-8 h-8',
+            'sm md:md' => 'w-8 h-8 md:w-10 md:h-10',
+            'md' => 'w-10 h-10',
+            'lg' => 'w-12 h-12',
+            default => $size,
+        },
     ];
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-icon',
-        'w-5 h-5' => $size === 'md',
-        'w-4 h-4' => $size === 'sm',
-        'w-4 h-4 md:w-5 md:h-5' => $size === 'sm md:md',
-        'w-6 h-6' => $size === 'lg',
-    ]);
+    $iconSize = match ($iconSize) {
+        'sm' => 'h-4 w-4',
+        'sm md:md' => 'h-4 w-4 md:h-5 md:w-5',
+        'md' => 'h-5 w-5',
+        'lg' => 'h-6 w-6',
+        default => $iconSize,
+    };
+
+    $iconClasses = 'filament-icon-button-icon';
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-indicator absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5',
-        'bg-primary-500/10' => $color === 'primary',
-        'bg-danger-500/10' => $color === 'danger',
-        'bg-gray-500/10' => $color === 'secondary',
-        'bg-success-500/10' => $color === 'success',
-        'bg-warning-500/10' => $color === 'warning',
+        'filament-icon-button-indicator absolute -top-0.5 -right-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        match ($indicatorColor) {
+            'danger' => 'bg-danger-600',
+            'gray' => 'bg-gray-600',
+            'primary' => 'bg-primary-600',
+            'secondary' => 'bg-secondary-600',
+            'success' => 'bg-success-600',
+            'warning' => 'bg-warning-600',
+            default => $indicatorColor,
+        },
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
@@ -57,18 +73,21 @@
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($label)
-            title="{{ $label }}"
-        @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        type="{{ $type }}"
-        {!! $disabled ? 'disabled' : '' !!}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
-        {{ $attributes->class($buttonClasses) }}
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'title' => $label,
+                    'type' => $type,
+                ], escape: false)
+                ->class($buttonClasses)
+        }}
     >
         @if ($label)
             <span class="sr-only">
@@ -76,17 +95,20 @@
             </span>
         @endif
 
-        <x-dynamic-component
-            :component="$icon"
-            :wire:loading.remove.delay="$hasLoadingIndicator"
-            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+        <x-filament::icon
+            :name="$icon"
+            :alias="$iconAlias"
+            group="support::icon-button"
+            :size="$iconSize"
             :class="$iconClasses"
+            :wire:loading.remove.delay="$hasLoadingIndicator"
+            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
         />
 
         @if ($hasLoadingIndicator)
-            <x-filament-support::loading-indicator
-                x-cloak
-                wire:loading.delay
+            <x-filament::loading-indicator
+                x-cloak=""
+                wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
                 :class="$iconClasses"
             />
@@ -103,16 +125,19 @@
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($label)
-            title="{{ $label }}"
-        @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
-        {{ $attributes->class($buttonClasses) }}
+        {{
+            $attributes
+                ->merge([
+                    'title' => $label,
+                ], escape: false)
+                ->class($buttonClasses)
+        }}
     >
         @if ($label)
             <span class="sr-only">
@@ -120,7 +145,12 @@
             </span>
         @endif
 
-        <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        <x-filament::icon
+            :name="$icon"
+            alias="support::icon-button"
+            :size="$iconSize"
+            :class="$iconClasses"
+        />
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">
