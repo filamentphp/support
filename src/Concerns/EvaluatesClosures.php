@@ -3,61 +3,103 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use ReflectionFunction;
+use ReflectionNamedType;
+use ReflectionParameter;
 
 trait EvaluatesClosures
 {
     protected string $evaluationIdentifier;
 
     /**
-     * @var array<string>
-     */
-    protected array $evaluationParametersToRemove = [];
-
-    /**
      * @template T
      *
      * @param  T | callable(): T  $value
      * @param  array<string, mixed>  $parameters
-     * @param  array<string>  $exceptParameters
      * @return T
      */
-    public function evaluate(mixed $value, array $parameters = [], array $exceptParameters = []): mixed
+    public function evaluate(mixed $value, array $parameters = []): mixed
     {
         if (! $value instanceof Closure) {
             return $value;
         }
 
-        $this->evaluationParametersToRemove = $exceptParameters;
+        $dependencies = [];
 
-        return app()->call(
-            $value,
-            array_merge(
-                isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
-                $this->getDefaultEvaluationParameters(),
-                $parameters,
-            ),
-        );
+        foreach ((new ReflectionFunction($value))->getParameters() as $parameter) {
+            $parameterName = $parameter->getName();
+
+            if (array_key_exists($parameterName, $parameters)) {
+                $dependencies[] = value($parameters[$parameterName]);
+
+                continue;
+            }
+
+            $dependencies[] = $this->resolveClosureDependencyForEvaluation($parameter);
+        }
+
+        return $value(...$dependencies);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return [];
-    }
+        $parameterName = $parameter->getName();
 
-    protected function resolveEvaluationParameter(string $parameter, Closure $value): mixed
-    {
-        if ($this->isEvaluationParameterRemoved($parameter)) {
+        if (
+            isset($this->evaluationIdentifier) &&
+            ($parameterName === $this->evaluationIdentifier)
+        ) {
+            return $this;
+        }
+
+        $typedParameterClassName = $this->getTypedReflectionParameterClassName($parameter);
+
+        if (filled($typedParameterClassName)) {
+            return app()->make($typedParameterClassName);
+        }
+
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        if ($parameter->isOptional()) {
             return null;
         }
 
-        return $value();
+        $staticClass = static::class;
+
+        throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [${$parameterName}] was unresolvable.");
     }
 
-    protected function isEvaluationParameterRemoved(string $parameter): bool
+    protected function getTypedReflectionParameterClassName(ReflectionParameter $parameter): ?string
     {
-        return in_array($parameter, $this->evaluationParametersToRemove);
+        $type = $parameter->getType();
+
+        if (! $type instanceof ReflectionNamedType) {
+            return null;
+        }
+
+        if ($type->isBuiltin()) {
+            return null;
+        }
+
+        $name = $type->getName();
+
+        $class = $parameter->getDeclaringClass();
+
+        if (blank($class)) {
+            return $name;
+        }
+
+        if ($name === 'self') {
+            return $class->getName();
+        }
+
+        if ($name === 'parent' && ($parent = $class->getParentClass())) {
+            return $parent->getName();
+        }
+
+        return $name;
     }
 }
