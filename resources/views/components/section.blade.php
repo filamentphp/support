@@ -39,7 +39,7 @@
         'filament-section-component',
         match ($aside) {
             true => 'grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2',
-            false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/20',
+            false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20',
         },
     ]) }}
 >
@@ -51,8 +51,8 @@
             'filament-section-component-header-wrapper flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
             match ($compact) {
-                true => 'p-4',
-                false => 'p-6',
+                true => 'px-4 py-3',
+                false => 'px-6 py-5',
             } => ! $aside,
         ])
     >
@@ -121,7 +121,7 @@
     >
         <div @class([
             'filament-section-component-content',
-            'rounded-xl bg-white shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
+            'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
             match ($compact) {
                 true => 'p-4',
                 false => 'p-6',
