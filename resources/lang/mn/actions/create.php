@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'Nuovo',
+        'label' => 'Шинэ :label',
 
         'modal' => [
 
-            'heading' => 'Salva :label',
+            'heading' => 'Шинэ :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Salva',
+                    'label' => 'Шинэ',
                 ],
 
                 'create_another' => [
-                    'label' => 'Salva & crea uno nuovo',
+                    'label' => 'Хадгалаад & дахин шинийг үүсгэх',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Creato',
+            'created' => 'Үүсэв',
         ],
 
     ],
