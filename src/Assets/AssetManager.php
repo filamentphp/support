@@ -35,16 +35,17 @@ class AssetManager
     /**
      * @param  array<Asset>  $assets
      */
-    public function register(array $assets, ?string $package = null): void
+    public function register(array $assets, string $package): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
 
-            match (true) {
-                $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
-                $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
-                $asset instanceof Css => $this->styles[$package][] = $asset,
-                $asset instanceof Js => $this->scripts[$package][] = $asset,
+            match ($asset::class) {
+                AlpineComponent::class => $this->alpineComponents[$package][] = $asset,
+                Css::class => $this->styles[$package][] = $asset,
+                Js::class => $this->scripts[$package][] = $asset,
+                /** @phpstan-ignore-next-line */
+                Theme::class => $this->themes[$asset->getId()] = $asset,
                 default => null,
             };
         }
@@ -53,12 +54,9 @@ class AssetManager
     /**
      * @param  array<string, mixed>  $data
      */
-    public function registerScriptData(array $data, ?string $package = null): void
+    public function registerScriptData(array $data, string $package): void
     {
-        $this->scriptData[$package] = [
-            ...($this->scriptData[$package] ?? []),
-            ...$data,
-        ];
+        $this->scriptData[$package] = array_merge($this->scriptData[$package] ?? [], $data);
     }
 
     /**
@@ -103,10 +101,7 @@ class AssetManager
                 continue;
             }
 
-            $data = [
-                ...$data,
-                ...$packageData,
-            ];
+            $data = array_merge($data, $packageData);
         }
 
         return $data;

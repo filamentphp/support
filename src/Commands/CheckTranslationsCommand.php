@@ -16,7 +16,7 @@ class CheckTranslationsCommand extends Command
                             {locales* : The locales to check.}
                             {--source=vendor : The directory containing the translations to check - either \'vendor\' or \'app\'.}';
 
-    protected $description = 'Check for missing and removed translations';
+    protected $description = 'Checks for missing and removed translations.';
 
     public function handle(): int
     {
@@ -101,10 +101,10 @@ class CheckTranslationsCommand extends Command
                     ->each(function ($keys, string $file) {
                         $this->table(
                             [$file, ''],
-                            [
-                                ...array_map(fn (string $key): array => [$key, 'Missing'], $keys['missing']),
-                                ...array_map(fn (string $key): array => [$key, 'Removed'], $keys['removed']),
-                            ],
+                            array_merge(
+                                array_map(fn (string $key) => [$key, 'Missing'], $keys['missing']),
+                                array_map(fn (string $key) => [$key, 'Removed'], $keys['removed']),
+                            ),
                             'box',
                         );
 

@@ -15,7 +15,6 @@
         match ($color) {
             'danger' => 'filament-dropdown-list-item-color-danger text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 dark:text-danger-400',
             'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
-            'info' => 'filament-dropdown-list-item-color-info text-info-600 hover:bg-info-500/10 focus:bg-info-500/10 dark:text-info-400',
             'primary' => 'filament-dropdown-list-item-color-primary text-primary-600 hover:bg-primary-500/10 focus:bg-primary-500/10 dark:text-primary-400',
             'secondary' => 'filament-dropdown-list-item-color-secondary text-secondary-600 hover:bg-secondary-500/10 focus:bg-secondary-500/10 dark:text-secondary-400',
             'success' => 'filament-dropdown-list-item-color-success text-success-600 hover:bg-success-500/10 focus:bg-success-500/10 dark:text-success-400',
@@ -49,21 +48,15 @@
 @endphp
 
 @if ($tag === 'button')
-    <button
-        @if ($keyBindings)
-            x-data="{}"
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
-        @endif
-        {{ $attributes
-            ->merge([
-                'disabled' => $disabled,
-                'type' => 'button',
-                'wire:loading.attr' => 'disabled',
-                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-            ], escape: false)
-            ->class([$buttonClasses])
-        }}
-    >
+    <button {{ $attributes
+        ->merge([
+            'disabled' => $disabled,
+            'type' => 'button',
+            'wire:loading.attr' => 'disabled',
+            'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+        ], escape: false)
+        ->class([$buttonClasses])
+    }}>
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
@@ -101,13 +94,7 @@
         @endif
     </button>
 @elseif ($tag === 'a')
-    <a
-        @if ($keyBindings)
-            x-data="{}"
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
-        @endif
-        {{ $attributes->class([$buttonClasses]) }}
-    >
+    <a {{ $attributes->class([$buttonClasses]) }}>
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
@@ -139,10 +126,6 @@
         @csrf
 
         <button
-            @if ($keyBindings)
-                x-data="{}"
-                x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
-            @endif
             type="submit"
             {{
                 $attributes

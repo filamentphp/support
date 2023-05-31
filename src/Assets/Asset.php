@@ -21,7 +21,7 @@ abstract class Asset
 
     public static function make(string $id, ?string $path = null): static
     {
-        return app(static::class, ['id' => $id, 'path' => $path]);
+        return new static($id, $path);
     }
 
     public function getId(): string
