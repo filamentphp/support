@@ -35,29 +35,33 @@
             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
         "
     @endif
-    {{ $attributes->class([
-        'filament-section-component',
-        match ($aside) {
-            true => 'grid grid-cols-1 gap-x-6 gap-y-4 items-start md:grid-cols-3',
-            false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20',
-        },
-    ]) }}
+    {{
+        $attributes->class([
+            'filament-section-component',
+            match ($aside) {
+                true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
+                false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20',
+            },
+        ])
+    }}
 >
     <div
         @if ($collapsible)
-            x-on:click="isCollapsed = !isCollapsed"
+            x-on:click="isCollapsed = ! isCollapsed"
         @endif
         @class([
             'filament-section-component-header-wrapper flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
             match ($compact) {
-                true => 'px-4 py-3',
-                false => 'px-6 py-5',
+                true => 'px-4 py-2.5',
+                false => 'px-6 py-4',
             } => ! $aside,
         ])
     >
         <div class="filament-section-component-header grid flex-1 gap-y-1">
-            <div class="filament-section-component-header-heading-wrapper flex items-center gap-x-2">
+            <div
+                class="filament-section-component-header-heading-wrapper flex items-center gap-x-2"
+            >
                 @if ($icon)
                     <x-filament::icon
                         :name="$icon"
@@ -82,13 +86,17 @@
                     />
                 @endif
 
-                <h3 class="filament-section-component-header-heading text-base font-semibold leading-6">
+                <h3
+                    class="filament-section-component-header-heading text-base font-semibold leading-6"
+                >
                     {{ $heading }}
                 </h3>
             </div>
 
             @if ($description?->isNotEmpty())
-                <p class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400">
+                <p
+                    class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400"
+                >
                     {{ $description }}
                 </p>
             @endif
@@ -99,8 +107,8 @@
                 color="gray"
                 icon="heroicon-m-chevron-down"
                 icon-alias="support::section.buttons.collapse"
-                x-on:click.stop="isCollapsed = !isCollapsed"
-                x-bind:class="{ 'rotate-180': !isCollapsed }"
+                x-on:click.stop="isCollapsed = ! isCollapsed"
+                x-bind:class="{ 'rotate-180': ! isCollapsed }"
                 class="-my-2.5 -me-2.5"
             />
         @endif
@@ -108,7 +116,7 @@
 
     <div
         @if ($collapsible)
-            x-bind:aria-expanded="(!isCollapsed).toString()"
+            x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($collapsed)
                 x-cloak
             @endif
@@ -121,14 +129,16 @@
             'md:order-first' => $contentBefore,
         ])
     >
-        <div @class([
-            'filament-section-component-content',
-            'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
-            match ($compact) {
-                true => 'p-4',
-                false => 'p-6',
-            },
-        ])>
+        <div
+            @class([
+                'filament-section-component-content',
+                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
+                match ($compact) {
+                    true => 'p-4',
+                    false => 'p-6',
+                },
+            ])
+        >
             {{ $slot }}
         </div>
     </div>
