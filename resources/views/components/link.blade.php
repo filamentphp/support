@@ -17,26 +17,31 @@
 @php
     $iconSize ??= $size;
 
-    $linkClasses = [
-        'filament-link relative inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70',
+    $linkClasses = \Illuminate\Support\Arr::toCssClasses([
+        "filament-link filament-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $indicator,
         'pointer-events-none opacity-70' => $disabled,
-        match ($color) {
-            'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
-            'gray' => 'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200',
-            'info' => 'text-info-600 hover:text-info-500 dark:text-info-500 dark:hover:text-info-400',
-            'primary' => 'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400',
-            'secondary' => 'text-secondary-600 hover:text-secondary-500 dark:text-secondary-500 dark:hover:text-secondary-400',
-            'success' => 'text-success-600 hover:text-success-500 dark:text-success-500 dark:hover:text-success-400',
-            'warning' => 'text-warning-600 hover:text-warning-500 dark:text-warning-500 dark:hover:text-warning-400',
-            default => $color,
-        },
         match ($size) {
-            'sm' => 'text-sm',
-            'md' => 'text-sm',
-            'lg' => 'text-base',
+            'xs' => 'gap-1 text-xs',
+            'sm' => 'gap-1 text-sm',
+            'md' => 'gap-1.5 text-sm',
+            'lg' => 'gap-1.5 text-sm',
+            'xl' => 'gap-1.5 text-sm',
         },
-    ];
+        match ($color) {
+            'gray' => 'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200',
+            default => 'text-custom-600 hover:text-custom-500 dark:text-custom-500 dark:hover:text-custom-400',
+        },
+    ]);
+
+    $linkStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+    ]);
+
+    $iconSize ??= match ($size) {
+        'xs', 'sm' => 'sm',
+        default => 'md',
+    };
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
@@ -45,25 +50,11 @@
         default => $iconSize,
     };
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-link-icon',
-        'me-1' => $iconPosition === 'before',
-        'ms-1' => $iconPosition === 'after',
-    ]);
+    $iconClasses = 'filament-link-icon';
 
-    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-link-indicator absolute -top-1 -end-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
-        match ($indicatorColor) {
-            'danger' => 'bg-danger-600',
-            'gray' => 'bg-gray-600',
-            'info' => 'bg-info-600',
-            'primary' => 'bg-primary-600',
-            'secondary' => 'bg-secondary-600',
-            'success' => 'bg-success-600',
-            'warning' => 'bg-warning-600',
-            default => $indicatorColor,
-        },
-    ]);
+    $indicatorClasses = 'filament-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+
+    $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [600]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -85,7 +76,11 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        {{ $attributes->class($linkClasses) }}
+        {{
+            $attributes
+                ->class([$linkClasses])
+                ->style([$linkStyles])
+        }}
     >
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
@@ -108,7 +103,10 @@
         @endif
 
         @if ($indicator)
-            <span class="{{ $indicatorClasses }}">
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
                 {{ $indicator }}
             </span>
         @endif
@@ -130,7 +128,8 @@
                     'disabled' => $disabled,
                     'type' => $type,
                 ], escape: false)
-                ->class($linkClasses)
+                ->class([$linkClasses])
+                ->style([$linkStyles])
         }}
     >
         @if ($iconPosition === 'before')
@@ -178,7 +177,10 @@
         @endif
 
         @if ($indicator)
-            <span class="{{ $indicatorClasses }}">
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
                 {{ $indicator }}
             </span>
         @endif
