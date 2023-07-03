@@ -13,6 +13,7 @@
     'hrComponent' => 'filament-support::hr',
     'id' => null,
     'openEventName' => 'open-modal',
+    'scrollableContent' => false,
     'slideOver' => false,
     'subheading' => null,
     'subheadingComponent' => 'filament-support::modal.subheading',
@@ -23,7 +24,6 @@
 
 <div
     x-data="{
-
         isOpen: false,
 
         livewire: null,
@@ -31,15 +31,18 @@
         close: function () {
             this.isOpen = false
 
-            this.$refs.modalContainer.dispatchEvent(new CustomEvent('modal-closed', { id: '{{ $id }}' }))
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { id: '{{ $id }}' }),
+            )
         },
 
         open: function () {
             this.isOpen = true
 
-            this.$refs.modalContainer.dispatchEvent(new CustomEvent('modal-opened', { id: '{{ $id }}' }))
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-opened', { id: '{{ $id }}' }),
+            )
         },
-
     }"
     x-trap.noscroll="isOpen"
     @if ($id)
@@ -88,15 +91,18 @@
                 $attributes->class([
                     'pointer-events-none relative w-full cursor-pointer transition',
                     'my-auto p-4' => ! $slideOver,
+                    'flex max-h-screen shrink' => $scrollableContent,
                 ])
             }}
         >
             <div
                 x-data="{ isShown: false }"
-                x-init="$nextTick(()=> {
-                    isShown = isOpen
-                    $watch('isOpen', () => isShown = isOpen)
-                })"
+                x-init="
+                    $nextTick(() => {
+                        isShown = isOpen
+                        $watch('isOpen', () => (isShown = isOpen))
+                    })
+                "
                 x-show="isShown"
                 x-cloak
                 @if (filled($id))
@@ -163,7 +169,7 @@
 
                 <div
                     @class([
-                        'flex h-full flex-col' => ($width === 'screen') || $slideOver,
+                        'flex h-full flex-col' => ($width === 'screen') || $slideOver || $scrollableContent,
                     ])
                 >
                     <div class="space-y-2">
@@ -176,6 +182,7 @@
                         @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
                             <x-dynamic-component
                                 :component="$hrComponent"
+                                :dark-mode="$darkMode"
                                 class="px-2"
                             />
                         @endif
@@ -184,7 +191,7 @@
                     <div
                         @class([
                             'filament-modal-content space-y-2 p-2',
-                            'flex-1 overflow-y-auto' => ($width === 'screen') || $slideOver,
+                            'flex-1 overflow-y-auto' => ($width === 'screen') || $slideOver || $scrollableContent,
                         ])
                     >
                         @if ($heading || $subheading)
@@ -227,6 +234,7 @@
                         @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
                             <x-dynamic-component
                                 :component="$hrComponent"
+                                :dark-mode="$darkMode"
                                 class="px-2"
                             />
                         @endif
