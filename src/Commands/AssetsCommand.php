@@ -68,6 +68,10 @@ class AssetsCommand extends Command
                 ->beforeLast(DIRECTORY_SEPARATOR),
         );
 
+        if(DIRECTORY_SEPARATOR === '\\') {
+            $filesystem->makeDirectory(dirname($to), 0755, true, true);
+        }
+
         $filesystem->copy($from, $to);
 
         $this->publishedAssets[] = $to;
