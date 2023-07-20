@@ -76,30 +76,16 @@ class InstallCommand extends Command
         $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
-        // Uninstall the filament/forms CSS
-        if (
-            (! $this->option('actions')) &&
-            (! $this->option('forms')) &&
-            (! $this->option('infolists')) &&
-            (! $this->option('tables'))
-        ) {
-            $css = $filesystem->get(resource_path('css/app.css'));
-            $css = (string) str($css)
-                ->replace('@import \'../../vendor/filament/forms/dist/index.css\';', '')
-                ->trim();
-            $filesystem->put(resource_path('css/app.css'), $css);
-        }
-
         // Install filament/notifications into the layout Blade file
         if (
             $this->option('actions') ||
             $this->option('notifications') ||
             $this->option('tables')
         ) {
-            $layout = $filesystem->get(resource_path('views/layouts/app.blade.php'));
+            $layout = $filesystem->get(resource_path('views/components/layouts/app.blade.php'));
             $layout = (string) str($layout)
                 ->replace('{{ $slot }}', '{{ $slot }}' . PHP_EOL . PHP_EOL . '        @livewire(\'notifications\')');
-            $filesystem->put(resource_path('views/layouts/app.blade.php'), $layout);
+            $filesystem->put(resource_path('views/components/layouts/app.blade.php'), $layout);
         }
 
         $this->components->info('Scaffolding installed successfully.');

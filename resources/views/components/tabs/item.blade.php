@@ -10,12 +10,24 @@
 ])
 
 @php
-    $iconColorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'text-custom-600 dark:text-custom-400' => $active,
+    $inactiveItemClasses = \Illuminate\Support\Arr::toCssClasses([
+        'text-gray-700 dark:text-gray-300',
+    ]);
+
+    $activeItemClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-tabs-item-active bg-gray-950/5 dark:bg-white/5 text-primary-600 dark:text-primary-400',
+    ]);
+
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-tabs-item-icon h-5 w-5',
+        match ($iconColor) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500 dark:text-custom-400',
+        },
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($iconColor, shades: [400, 600]) => $iconColorClasses,
+        \Filament\Support\get_color_css_variables($iconColor, shades: [400, 500]) => $iconColor !== 'gray',
     ]);
 @endphp
 
@@ -25,10 +37,8 @@
     @endif
     @if ($alpineActive)
         x-bind:class="{
-            'hover:text-gray-800 focus:text-primary-600 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400':
-                ! {{ $alpineActive }},
-            'text-primary-600 shadow bg-white dark:text-white dark:bg-primary-600':
-                {{ $alpineActive }},
+            @js($inactiveItemClasses): ! {{ $alpineActive }}
+            @js($activeItemClasses): {{ $alpineActive }}
         }"
     @endif
     {{
@@ -38,22 +48,18 @@
                 'role' => 'tab',
             ])
             ->class([
-                'filament-tabs-item flex h-8 items-center gap-3 whitespace-nowrap rounded-md px-5 font-medium outline-none focus:ring-2 focus:ring-inset focus:ring-primary-600',
-                'hover:text-gray-800 focus:text-primary-600 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => (! $active) && (! $alpineActive),
-                'bg-white text-primary-600 shadow dark:bg-primary-600 dark:text-white' => $active && (! $alpineActive),
+                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
+                $inactiveItemClasses => (! $alpineActive) && (! $active),
+                $activeItemClasses => (! $alpineActive) && $active,
             ])
     }}
 >
     @if ($icon && $iconPosition === 'before')
         <x-filament::icon
             :name="$icon"
-            :color="$iconColorClasses"
-            alias="support::tabs.item"
-            size="h-5 w-5"
             :style="$iconStyles"
-            x-bind:class="{
-                '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
-            }"
+            :class="$iconClasses"
+            :style="$iconStyles"
         />
     @endif
 
@@ -64,32 +70,14 @@
     @if ($icon && $iconPosition === 'after')
         <x-filament::icon
             :name="$icon"
-            :color="$iconColorClasses"
-            alias="support::tabs.item"
-            size="h-5 w-5"
+            :class="$iconClasses"
             :style="$iconStyles"
-            x-bind:class="{
-                '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
-            }"
         />
     @endif
 
     @if ($badge)
-        <span
-            @if ($alpineActive)
-                x-bind:class="{
-                    'bg-white dark:bg-gray-600': ! {{ $alpineActive }},
-                    'bg-primary-600 text-white font-medium dark:bg-white dark:text-primary-600':
-                        {{ $alpineActive }},
-                }"
-            @endif
-            @class([
-                'min-h-4 inline-flex items-center justify-center whitespace-normal rounded-xl px-2 py-0.5 text-xs font-medium tracking-tight',
-                'bg-white dark:bg-gray-600' => (! $active) && (! $alpineActive),
-                'bg-primary-600 font-medium text-white dark:bg-white dark:text-primary-600' => $active && (! $alpineActive),
-            ])
-        >
+        <x-filament::badge size="sm">
             {{ $badge }}
-        </span>
+        </x-filament::badge>
     @endif
 </{{ $tag }}>
