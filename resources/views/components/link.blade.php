@@ -1,3 +1,9 @@
+@php
+    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
@@ -6,7 +12,7 @@
     'form' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => 'before',
+    'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
     'size' => 'md',
@@ -16,18 +22,31 @@
 ])
 
 @php
-    $iconSize ??= $size;
+    $iconSize ??= match ($size) {
+        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
+        ActionSize::Medium, 'md' => IconSize::Medium,
+        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
+    };
+
+    $stringSize = match ($size) {
+        ActionSize::ExtraSmall => 'xs',
+        ActionSize::Small => 'sm',
+        ActionSize::Medium => 'md',
+        ActionSize::Large => 'lg',
+        ActionSize::ExtraLarge => 'xl',
+        default => $size,
+    };
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "fi-link fi-link-size-{$stringSize} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
-            'xs' => 'gap-1 text-xs',
-            'sm' => 'gap-1 text-sm',
-            'md' => 'gap-1.5 text-sm',
-            'lg' => 'gap-1.5 text-sm',
-            'xl' => 'gap-1.5 text-sm',
+            ActionSize::ExtraSmall, 'xs' => 'gap-1 text-xs',
+            ActionSize::Small, 'sm' => 'gap-1 text-sm',
+            ActionSize::Medium, 'md' => 'gap-1.5 text-sm',
+            ActionSize::Large, 'lg' => 'gap-1.5 text-sm',
+            ActionSize::ExtraLarge, 'xl' => 'gap-1.5 text-sm',
         },
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',
@@ -40,16 +59,16 @@
     ]);
 
     $iconSize ??= match ($size) {
-        'xs', 'sm' => 'sm',
-        default => 'md',
+        'xs', 'sm' => IconSize::Small,
+        default => IconSize::Medium,
     };
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-link-icon',
         match ($iconSize) {
-            'sm' => 'h-4 w-4',
-            'md' => 'h-5 w-5',
-            'lg' => 'h-6 w-6',
+            IconSize::Small, 'sm' => 'h-4 w-4',
+            IconSize::Medium, 'md' => 'h-5 w-5',
+            IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
         match ($color) {
@@ -93,7 +112,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($icon && $iconPosition === 'before')
+        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -104,7 +123,7 @@
 
         {{ $slot }}
 
-        @if ($icon && $iconPosition === 'after')
+        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -147,7 +166,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($iconPosition === 'before')
+        @if ($iconPosition === in_array($iconPosition, [IconPosition::Before, 'before']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
@@ -171,7 +190,7 @@
 
         {{ $slot }}
 
-        @if ($iconPosition === 'after')
+        @if (in_array($iconPosition, [IconPosition::After, 'after']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"

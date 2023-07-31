@@ -1,10 +1,14 @@
+@php
+    use Filament\Support\Enums\IconPosition;
+@endphp
+
 @props([
     'active' => false,
     'alpineActive' => null,
     'badge' => null,
     'icon' => null,
     'iconColor' => 'gray',
-    'iconPosition' => 'before',
+    'iconPosition' => IconPosition::Before,
     'tag' => 'button',
     'type' => 'button',
 ])
@@ -46,7 +50,7 @@
             ])
     }}
 >
-    @if ($icon && $iconPosition === 'before')
+    @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
         <x-filament::icon
             :icon="$icon"
             :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
@@ -62,7 +66,7 @@
         {{ $slot }}
     </span>
 
-    @if ($icon && $iconPosition === 'after')
+    @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
         <x-filament::icon
             :icon="$icon"
             :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"

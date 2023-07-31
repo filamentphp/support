@@ -1,3 +1,8 @@
+@php
+    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
@@ -17,19 +22,19 @@
 
 @php
     $iconSize ??= match ($size) {
-        'xs' => 'sm',
-        'sm', 'md' => 'md',
-        'lg', 'xl' => 'lg',
+        ActionSize::ExtraSmall, 'xs' => IconSize::Small,
+        ActionSize::Small, ActionSize::Medium, 'sm', 'md' => IconSize::Medium,
+        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
         match ($size) {
-            'xs' => 'h-7 w-7',
-            'sm' => 'h-8 w-8',
-            'md' => 'h-9 w-9',
-            'lg' => 'h-10 w-10',
-            'xl' => 'h-11 w-11',
+            ActionSize::ExtraSmall, 'xs' => 'h-7 w-7',
+            ActionSize::Small, 'sm' => 'h-8 w-8',
+            ActionSize::Medium, 'md' => 'h-9 w-9',
+            ActionSize::Large, 'lg' => 'h-10 w-10',
+            ActionSize::ExtraLarge, 'xl' => 'h-11 w-11',
             default => $size,
         },
         match ($color) {
@@ -43,9 +48,9 @@
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn-icon',
         match ($iconSize) {
-            'sm' => 'h-4 w-4',
-            'md' => 'h-5 w-5',
-            'lg' => 'h-6 w-6',
+            IconSize::Small, 'sm' => 'h-4 w-4',
+            IconSize::Medium, 'md' => 'h-5 w-5',
+            IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
     ]);
