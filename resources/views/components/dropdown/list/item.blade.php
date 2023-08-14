@@ -1,9 +1,15 @@
+@php
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
+    'badge' => null,
+    'badgeColor' => null,
     'color' => 'gray',
-    'detail' => null,
     'disabled' => false,
     'icon' => null,
-    'iconSize' => 'md',
+    'iconAlias' => null,
+    'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
@@ -11,34 +17,44 @@
 
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors outline-none disabled:pointer-events-none disabled:opacity-70',
-        is_string($color) ? "filament-dropdown-list-item-color-{$color}" : null,
+        'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
+        'pointer-events-none opacity-70' => $disabled,
+        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
-            default => 'filament-dropdown-list-item-color-custom text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 dark:text-custom-400',
+            'gray' => 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            default => 'hover:bg-custom-50 focus:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
         },
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500, 600]) => $color !== 'gray',
     ]);
 
-    $iconSize = match ($iconSize) {
-        'sm' => 'h-4 w-4',
-        'md' => 'h-5 w-5',
-        'lg' => 'h-6 w-6',
-        default => $iconSize,
-    };
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-dropdown-list-item-icon',
+        match ($iconSize) {
+            IconSize::Small, 'sm' => 'h-4 w-4',
+            IconSize::Medium, 'md' => 'h-5 w-5',
+            IconSize::Large, 'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500 dark:text-custom-400',
+        },
+    ]);
 
-    $iconClasses = 'filament-dropdown-list-item-icon shrink-0';
+    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
 
-    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-dropdown-list-item-label flex-1 truncate text-start',
+        match ($color) {
+            'gray' => 'text-gray-700 dark:text-gray-200',
+            default => 'text-custom-600 dark:text-custom-400 ',
+        },
+    ]);
 
-    $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
-
-    $detailClasses = 'filament-dropdown-list-item-detail ms-auto text-xs';
-
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
     $hasLoadingIndicator = filled($wireTarget);
 
@@ -59,7 +75,7 @@
                     'disabled' => $disabled,
                     'type' => 'button',
                     'wire:loading.attr' => 'disabled',
-                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
@@ -67,12 +83,11 @@
     >
         @if ($icon)
             <x-filament::icon
-                :name="$icon"
-                alias="support::dropdown.list.item"
-                :size="$iconSize"
-                :class="$iconClasses"
+                :alias="$iconAlias"
+                :icon="$icon"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+                :class="$iconClasses"
             />
         @endif
 
@@ -87,7 +102,7 @@
             <x-filament::loading-indicator
                 wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses . ' ' . $iconSize"
+                :class="$iconClasses"
             />
         @endif
 
@@ -95,10 +110,10 @@
             {{ $slot }}
         </span>
 
-        @if ($detail)
-            <span class="{{ $detailClasses }}">
-                {{ $detail }}
-            </span>
+        @if (filled($badge))
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -115,9 +130,8 @@
     >
         @if ($icon)
             <x-filament::icon
-                :name="$icon"
-                alias="support::dropdown.list.item"
-                :size="$iconSize"
+                :alias="$iconAlias"
+                :icon="$icon"
                 :class="$iconClasses"
             />
         @endif
@@ -133,15 +147,15 @@
             {{ $slot }}
         </span>
 
-        @if ($detail)
-            <span class="{{ $detailClasses }}">
-                {{ $detail }}
-            </span>
+        @if (filled($badge))
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
         @endif
     </a>
 @elseif ($tag === 'form')
     <form
-        {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}
+        {{ $attributes->only(['action', 'class', 'method', 'wire:submit']) }}
     >
         @csrf
 
@@ -153,16 +167,15 @@
             type="submit"
             {{
                 $attributes
-                    ->except(['action', 'class', 'method', 'wire:submit.prevent'])
+                    ->except(['action', 'class', 'method', 'wire:submit'])
                     ->class([$buttonClasses])
                     ->style([$buttonStyles])
             }}
         >
             @if ($icon)
                 <x-filament::icon
-                    :name="$icon"
-                    alias="support::dropdown.list.item"
-                    :size="$iconSize"
+                    :alias="$iconAlias"
+                    :icon="$icon"
                     :class="$iconClasses"
                 />
             @endif
@@ -171,10 +184,10 @@
                 {{ $slot }}
             </span>
 
-            @if ($detail)
-                <span class="{{ $detailClasses }}">
-                    {{ $detail }}
-                </span>
+            @if (filled($badge))
+                <x-filament::badge :color="$badgeColor" size="sm">
+                    {{ $badge }}
+                </x-filament::badge>
             @endif
         </button>
     </form>
