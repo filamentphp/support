@@ -7,16 +7,16 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHeading
 {
-    protected string | Htmlable | Closure | null $heading = null;
+    protected string | Htmlable | Closure $heading;
 
-    public function heading(string | Htmlable | Closure | null $heading = null): static
+    public function heading(string | Htmlable | Closure $heading): static
     {
         $this->heading = $heading;
 
         return $this;
     }
 
-    public function getHeading(): string | Htmlable | null
+    public function getHeading(): string | Htmlable
     {
         return $this->evaluate($this->heading);
     }

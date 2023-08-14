@@ -15,6 +15,7 @@ class UpgradeCommand extends Command
         foreach ([
             AssetsCommand::class,
             'config:clear',
+            'livewire:discover',
             'route:clear',
             'view:clear',
         ] as $command) {
