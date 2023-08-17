@@ -3,13 +3,12 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Filament\Support\Enums\Alignment;
 
 trait HasAlignment
 {
-    protected Alignment | string | Closure | null $alignment = null;
+    protected string | Closure | null $alignment = null;
 
-    public function alignment(Alignment | string | Closure | null $alignment): static
+    public function alignment(string | Closure | null $alignment): static
     {
         $this->alignment = $alignment;
 
@@ -18,35 +17,35 @@ trait HasAlignment
 
     public function alignStart(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Start : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'start' : null);
     }
 
     public function alignCenter(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Center : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'center' : null);
     }
 
     public function alignEnd(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::End : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'end' : null);
     }
 
     public function alignJustify(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Justify : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'justify' : null);
     }
 
     public function alignLeft(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Left : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'left' : null);
     }
 
     public function alignRight(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Right : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'right' : null);
     }
 
-    public function getAlignment(): Alignment | string | null
+    public function getAlignment(): ?string
     {
         return $this->evaluate($this->alignment);
     }

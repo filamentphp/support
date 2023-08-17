@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface TranslatableContentDriver
 {
-    public function __construct(string $activeLocale);
+    public function __construct(string $currentLocale);
 
     public function isAttributeTranslatable(string $model, string $attribute): bool;
 
@@ -21,12 +21,10 @@ interface TranslatableContentDriver
      */
     public function makeRecord(string $model, array $data): Model;
 
-    public function setRecordLocale(Model $record): Model;
-
     /**
      * @param  array<string, mixed>  $data
      */
     public function updateRecord(Model $record, array $data): Model;
 
-    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, bool $isCaseInsensitivityForced = false): Builder;
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause): Builder;
 }

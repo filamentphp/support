@@ -9,7 +9,7 @@ export default defineConfig({
                 ...refreshPaths,
                 'app/Filament/**',
                 'app/Forms/Components/**',
-                'app/Livewire/**',
+                'app/Http/Livewire/**',
                 'app/Infolists/Components/**',
                 'app/Providers/Filament/**',
                 'app/Tables/Columns/**',
