@@ -4,6 +4,7 @@ namespace Filament\Support;
 
 use Composer\InstalledVersions;
 use Filament\Support\Assets\AssetManager;
+use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Commands\AssetsCommand;
@@ -12,6 +13,7 @@ use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
+use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
@@ -27,16 +29,16 @@ class SupportServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-support')
+            ->name('filament')
             ->hasCommands([
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
                 UpgradeCommand::class,
             ])
-            ->hasConfigFile('filament')
+            ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews(namespace: 'filament');
+            ->hasViews();
     }
 
     public function packageRegistered(): void
@@ -57,21 +59,32 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->scoped(
+            ViewManager::class,
+            fn () => new ViewManager(),
+        );
+
+        $this->app->scoped(
             HtmlSanitizerInterface::class,
             fn (): HtmlSanitizer => new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
                     ->allowSafeElements()
+                    ->allowRelativeLinks()
+                    ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*'),
+                    ->allowAttribute('style', allowedElements: '*')
+                    ->withMaxInputLength(500000),
             ),
         );
     }
 
     public function packageBooted(): void
     {
+        config()->set('livewire.inject_morph_markers', false);
+
         FilamentAsset::register([
-            Js::make('support', __DIR__ . '/../dist/index.js'),
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
+            Css::make('support', __DIR__ . '/../dist/index.css'),
+            Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
 
         Blade::directive('captureSlots', function (string $expression): string {
