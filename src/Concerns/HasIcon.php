@@ -3,16 +3,19 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Filament\Support\Enums\IconPosition;
-use Filament\Support\Enums\IconSize;
 
 trait HasIcon
 {
     protected string | Closure | null $icon = null;
 
-    protected IconPosition | string | Closure | null $iconPosition = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $iconColor = null;
 
-    protected IconSize | string | Closure | null $iconSize = null;
+    protected string | Closure | null $iconPosition = null;
+
+    protected string | Closure | null $iconSize = null;
 
     public function icon(string | Closure | null $icon): static
     {
@@ -21,14 +24,24 @@ trait HasIcon
         return $this;
     }
 
-    public function iconPosition(IconPosition | string | Closure | null $position): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function iconColor(string | array | Closure | null $color): static
+    {
+        $this->iconColor = $color;
+
+        return $this;
+    }
+
+    public function iconPosition(string | Closure | null $position): static
     {
         $this->iconPosition = $position;
 
         return $this;
     }
 
-    public function iconSize(IconSize | string | Closure | null $size): static
+    public function iconSize(string | Closure | null $size): static
     {
         $this->iconSize = $size;
 
@@ -40,12 +53,20 @@ trait HasIcon
         return $this->evaluate($this->icon);
     }
 
-    public function getIconPosition(): IconPosition | string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getIconColor(): string | array | null
     {
-        return $this->evaluate($this->iconPosition) ?? IconPosition::Before;
+        return $this->evaluate($this->iconColor);
     }
 
-    public function getIconSize(): IconSize | string | null
+    public function getIconPosition(): ?string
+    {
+        return $this->evaluate($this->iconPosition) ?? 'before';
+    }
+
+    public function getIconSize(): ?string
     {
         return $this->evaluate($this->iconSize);
     }

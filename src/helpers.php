@@ -2,10 +2,6 @@
 
 namespace Filament\Support;
 
-use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Facades\FilamentView;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
@@ -54,26 +50,8 @@ if (! function_exists('Filament\Support\get_color_css_variables')) {
      * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}  $color
      * @param  array<int>  $shades
      */
-    function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
+    function get_color_css_variables(string | array $color, array $shades): string
     {
-        if ($color === null) {
-            return null;
-        }
-
-        if ($alias !== null) {
-            if (($overridingShades = FilamentColor::getOverridingShades($alias)) !== null) {
-                $shades = $overridingShades;
-            }
-
-            if ($addedShades = FilamentColor::getAddedShades($alias)) {
-                $shades = [...$shades, ...$addedShades];
-            }
-
-            if ($removedShades = FilamentColor::getRemovedShades($alias)) {
-                $shades = array_diff($shades, $removedShades);
-            }
-        }
-
         $variables = [];
 
         if (is_string($color)) {
@@ -106,40 +84,5 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
         );
 
         return $attributes;
-    }
-}
-
-if (! function_exists('Filament\Support\is_slot_empty')) {
-    function is_slot_empty(?Htmlable $slot): bool
-    {
-        if ($slot === null) {
-            return true;
-        }
-
-        return trim(
-            str_replace(
-                [
-                    '<!-- __BLOCK__ -->',
-                    '<!-- __ENDBLOCK__ -->',
-                ],
-                '',
-                $slot->toHtml()
-            ),
-        ) === '';
-    }
-}
-
-if (! function_exists('Filament\Support\generate_href_html')) {
-    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
-    {
-        $html = "href=\"{$url}\"";
-
-        if ($shouldOpenInNewTab) {
-            $html .= ' target="_blank"';
-        } elseif (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
-            $html .= ' wire:navigate';
-        }
-
-        return new HtmlString($html);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Filament\Support\Commands;
 
-use Filament\Support\Events\FilamentUpgraded;
 use Illuminate\Console\Command;
 
 class UpgradeCommand extends Command
@@ -16,13 +15,12 @@ class UpgradeCommand extends Command
         foreach ([
             AssetsCommand::class,
             'config:clear',
+            'livewire:discover',
             'route:clear',
             'view:clear',
         ] as $command) {
             $this->call($command);
         }
-
-        FilamentUpgraded::dispatch();
 
         $this->components->info('Successfully upgraded!');
 

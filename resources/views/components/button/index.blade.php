@@ -1,9 +1,3 @@
-@php
-    use Filament\Support\Enums\ActionSize;
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Enums\IconSize;
-@endphp
-
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
@@ -11,49 +5,33 @@
     'disabled' => false,
     'form' => null,
     'grouped' => false,
-    'href' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => IconPosition::Before,
+    'iconPosition' => 'before',
     'iconSize' => null,
     'keyBindings' => null,
     'labeledFrom' => null,
     'labelSrOnly' => false,
     'outlined' => false,
-    'size' => ActionSize::Medium,
+    'size' => 'md',
     'tag' => 'button',
-    'target' => null,
     'tooltip' => null,
     'type' => 'button',
 ])
 
 @php
-    if (! $size instanceof ActionSize) {
-        $size = ActionSize::tryFrom($size) ?? $size;
-    }
-
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            'fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2',
-            'pointer-events-none opacity-70' => $disabled,
+            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
-            match ($color) {
-                'gray' => 'fi-color-gray',
-                default => 'fi-color-custom',
-            },
-            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
             is_string($color) ? "fi-btn-color-{$color}" : null,
-            "fi-size-{$size->value}" => $size instanceof ActionSize,
-            // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
-            "fi-btn-size-{$size->value}" => $size instanceof ActionSize,
             match ($size) {
-                ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
-                ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
-                ActionSize::Medium => 'gap-1.5 px-3 py-2 text-sm',
-                ActionSize::Large => 'gap-1.5 px-3.5 py-2.5 text-sm',
-                ActionSize::ExtraLarge => 'gap-1.5 px-4 py-3 text-sm',
-                default => $size,
+                'xs' => 'gap-1 px-2 py-1.5 text-xs',
+                'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
+                'md' => 'gap-1.5 px-3 py-2 text-sm',
+                'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                'xl' => 'gap-1.5 px-4 py-3 text-sm',
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -70,20 +48,20 @@
                 [
                     'fi-btn-outlined ring-1',
                     match ($color) {
-                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
-                        default => 'text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500',
+                        'gray' => 'ring-gray-300 text-gray-950 hover:bg-gray-400/10 focus:bg-gray-400/10 focus:ring-gray-400/40 dark:ring-gray-700 dark:text-white',
+                        default => 'ring-custom-600 text-custom-600 hover:bg-custom-400/10 focus:bg-custom-400/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-400/70',
                     },
                 ] :
                 [
-                    'shadow-sm' => ! $grouped,
+                    'shadow' => ! $grouped,
                     ...match ($color) {
                         'gray' => [
-                            'bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
-                            'ring-1 ring-gray-950/10 dark:ring-white/20' => ! $grouped,
+                            'bg-white text-gray-950 hover:bg-gray-50 focus:bg-gray-50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20',
+                            'ring-gray-950/10 ring-1 dark:ring-white/20 dark:hover:ring-white/30 dark:focus:ring-white/30' => ! $grouped,
                         ],
                         default => [
-                            'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
-                            'focus:ring-custom-500/50 dark:focus:ring-custom-400/50' => ! $grouped,
+                            'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus:bg-custom-400',
+                            'focus:ring-custom-400/50' => ! $grouped,
                         ],
                     },
                 ]
@@ -91,39 +69,32 @@
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [400, 500, 600],
-        ) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
-        default => IconSize::Medium,
+        'xs', 'sm' => 'sm',
+        default => 'md',
     };
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-icon',
         match ($iconSize) {
-            IconSize::Small, 'sm' => 'h-4 w-4',
-            IconSize::Medium, 'md' => 'h-5 w-5',
-            IconSize::Large, 'lg' => 'h-6 w-6',
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
             default => $iconSize,
-        },
-        match ($color) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => null,
         },
     ]);
 
-    $badgeContainerClasses = 'fi-btn-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeClasses = 'absolute -top-1 start-full -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
         'sr-only' => $labelSrOnly,
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
     $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
     $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
@@ -172,28 +143,25 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
         @if ($hasFileUploadLoadingIndicator)
             x-data="{
                 form: null,
                 isUploadingFile: false,
             }"
-            x-init="
-                form = $el.closest('form')
+        x-init="
+            form = $el.closest('form')
 
-                form?.addEventListener('file-upload-started', () => {
-                    isUploadingFile = true
-                })
+            form?.addEventListener('file-upload-started', () => {
+                isUploadingFile = true
+            })
 
-                form?.addEventListener('file-upload-finished', () => {
-                    isUploadingFile = false
-                })
-            "
-            x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
+            form?.addEventListener('file-upload-finished', () => {
+                isUploadingFile = false
+            })
+        "
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         @endif
         {{
             $attributes
@@ -208,14 +176,14 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($iconPosition === 'before')
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :icon="$icon"
+                    :name="$icon"
+                    :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
                 />
             @endif
 
@@ -223,7 +191,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
 
@@ -231,7 +199,7 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
@@ -247,18 +215,18 @@
 
         @if ($hasFileUploadLoadingIndicator)
             <span x-show="isUploadingFile" x-cloak>
-                {{ __('filament::components/button.messages.uploading_file') }}
+                {{ __('filament-support::components/button.messages.uploading_file') }}
             </span>
         @endif
 
-        @if (in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($iconPosition === 'after')
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :icon="$icon"
+                    :name="$icon"
+                    :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
                 />
             @endif
 
@@ -266,7 +234,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
 
@@ -274,13 +242,13 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
 
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>
@@ -289,7 +257,6 @@
     </button>
 @elseif ($tag === 'a')
     <a
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
@@ -297,10 +264,7 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
         {{
             $attributes
@@ -308,10 +272,10 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :alias="$iconAlias"
-                :icon="$icon"
+                :name="$icon"
                 :class="$iconClasses"
             />
         @endif
@@ -320,16 +284,16 @@
             {{ $slot }}
         </span>
 
-        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($icon && $iconPosition === 'after')
             <x-filament::icon
                 :alias="$iconAlias"
-                :icon="$icon"
+                :name="$icon"
                 :class="$iconClasses"
             />
         @endif
 
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>

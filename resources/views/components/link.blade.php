@@ -1,90 +1,62 @@
-@php
-    use Filament\Support\Enums\ActionSize;
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Enums\IconSize;
-@endphp
-
 @props([
-    'badge' => null,
-    'badgeColor' => 'primary',
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
-    'href' => null,
     'icon' => null,
-    'iconAlias' => null,
-    'iconPosition' => IconPosition::Before,
+    'iconPosition' => 'before',
     'iconSize' => null,
+    'indicator' => null,
+    'indicatorColor' => 'primary',
     'keyBindings' => null,
-    'size' => ActionSize::Medium,
+    'size' => 'md',
     'tag' => 'a',
-    'target' => null,
     'tooltip' => null,
     'type' => 'button',
 ])
 
 @php
-    if (! $size instanceof ActionSize) {
-        $size = ActionSize::tryFrom($size) ?? $size;
-    }
+    $iconSize ??= $size;
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline',
-        'pe-4' => $badge,
+        "filament-link filament-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        'pe-4' => $indicator,
         'pointer-events-none opacity-70' => $disabled,
-        "fi-size-{$size->value}" => $size instanceof ActionSize,
-        // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
-        "fi-link-size-{$size->value}" => $size instanceof ActionSize,
         match ($size) {
-            ActionSize::ExtraSmall => 'gap-1 text-xs',
-            ActionSize::Small => 'gap-1 text-sm',
-            ActionSize::Medium => 'gap-1.5 text-sm',
-            ActionSize::Large => 'gap-1.5 text-sm',
-            ActionSize::ExtraLarge => 'gap-1.5 text-sm',
-            default => $size,
+            'xs' => 'gap-1 text-xs',
+            'sm' => 'gap-1 text-sm',
+            'md' => 'gap-1.5 text-sm',
+            'lg' => 'gap-1.5 text-sm',
+            'xl' => 'gap-1.5 text-sm',
         },
         match ($color) {
-            'gray' => 'fi-color-gray text-gray-700 dark:text-gray-200',
-            default => 'fi-color-custom text-custom-600 dark:text-custom-400',
+            'gray' => 'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200',
+            default => 'text-custom-600 hover:text-custom-500 dark:text-custom-500 dark:hover:text-custom-400',
         },
     ]);
 
     $linkStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [300, 400, 500, 600],
-        ) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
-        default => IconSize::Medium,
+        'xs', 'sm' => 'sm',
+        default => 'md',
     };
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link-icon',
-        match ($iconSize) {
-            IconSize::Small, 'sm' => 'h-4 w-4',
-            IconSize::Medium, 'md' => 'h-5 w-5',
-            IconSize::Large, 'lg' => 'h-6 w-6',
-            default => $iconSize,
-        },
-        match ($color) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-600 dark:text-custom-400',
-        },
-    ]);
+    $iconSize = match ($iconSize) {
+        'sm' => 'h-4 w-4',
+        'md' => 'h-5 w-5',
+        'lg' => 'h-6 w-6',
+        default => $iconSize,
+    };
 
-    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [500],
-        ) => $color !== 'gray',
-    ]);
+    $iconClasses = 'filament-link-icon';
 
-    $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $indicatorClasses = 'filament-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [600]);
+
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
@@ -95,7 +67,6 @@
 
 @if ($tag === 'a')
     <a
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
@@ -103,10 +74,7 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
         {{
             $attributes
@@ -114,32 +82,33 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($icon && $iconPosition === 'before')
             <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
+                :name="$icon"
+                group="support::link.prefix"
+                :size="$iconSize"
                 :class="$iconClasses"
-                :style="$iconStyles"
             />
         @endif
 
         {{ $slot }}
 
-        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($icon && $iconPosition === 'after')
             <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
+                :name="$icon"
+                group="support::link.suffix"
+                :size="$iconSize"
                 :class="$iconClasses"
-                :style="$iconStyles"
             />
         @endif
 
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
-                    {{ $badge }}
-                </x-filament::badge>
-            </div>
+        @if ($indicator)
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
+                {{ $indicator }}
+            </span>
         @endif
     </a>
 @elseif ($tag === 'button')
@@ -151,31 +120,27 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
         {{
             $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
-                    'wire:loading.attr' => 'disabled',
-                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$linkClasses])
                 ->style([$linkStyles])
         }}
     >
-        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($iconPosition === 'before')
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
+                    :name="$icon"
+                    group="support::link.prefix"
+                    :size="$iconSize"
+                    :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
                 />
             @endif
 
@@ -183,22 +148,22 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
 
         {{ $slot }}
 
-        @if (in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($iconPosition === 'after')
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
+                    :name="$icon"
+                    group="support::link.suffix"
+                    :size="$iconSize"
+                    :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
-                    :style="$iconStyles"
                 />
             @endif
 
@@ -206,18 +171,18 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
-                    :style="$iconStyles"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
 
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
-                    {{ $badge }}
-                </x-filament::badge>
-            </div>
+        @if ($indicator)
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
+                {{ $indicator }}
+            </span>
         @endif
     </button>
 @endif

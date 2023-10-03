@@ -10,7 +10,7 @@ They have a website where you can [search all the available icons](https://blade
 
 ## Using custom SVGs as icons
 
-The [Blade Icons](https://github.com/blade-ui-kit/blade-icons) package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
+The [Blade Icons] package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
 
 To start with, publish the Blade Icons configuration file:
 
@@ -26,93 +26,77 @@ Now that the default set exists in the config file, you can simply put any icons
 
 Filament includes an icon management system that allows you to replace any icons are used by default in the UI with your own. This happens in the `boot()` method of any service provider, like `AppServiceProvider`, or even a dedicated service provider for icons. If you wanted to build a plugin to replace Heroicons with a different set, you could absolutely do that by creating a Laravel package with a similar service provider.
 
-To replace an icon, you can use the `FilamentIcon` facade. It has a `register()` method, which accepts an array of icons to replace. The key of the array is the unique [icon alias](#available-icon-aliases) that identifies the icon in the Filament UI, and the value is name of a Blade icon to replace it instead:
+To replace an icon, you can use the `FilamentIcon` facade. It has a `register()` method, which accepts an array of icons to replace. The key of the array is the unique icon "alias" that identifies the icon in the Filament UI, and the value is an `Icon` object that represents the icon that should be used instead:
 
 ```php
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Icon;
 
 FilamentIcon::register([
-    'panels::topbar.global-search.field' => 'fas-magnifying-glass',
-    'panels::sidebar.group.collapse-button' => 'fas-chevron-up',
+    'panels::global-search.input.prefix' => Icon::make('fas-magnifying-glass'),
+    'panels::sidebar.group.collapse' => Icon::make('fas-chevron-up'),
+]);
+```
+
+### Customizing the size of icons
+
+By default, Filament will use [Tailwind classes](https://tailwindcss.com/docs/height) to set the size of icons. To customize the size of an icon you have registered, you can use the `size()` method of the `Icon` object, and pass in a set of CSS classes to use instead:
+
+```php
+use Filament\Support\Icons\Icon;
+
+Icon::make('fas-magnifying-glass')
+    ->size('h-6 w-6')
+```
+
+### Customizing the color of icons
+
+By default, Filament will use [Tailwind classes](https://tailwindcss.com/docs/text-color) to set the color of icons. To customize the color of an icon you have registered, you can use the `color()` method of the `Icon` object, and pass in a set of CSS classes to use instead:
+
+```php
+use Filament\Support\Icons\Icon;
+
+Icon::make('fas-magnifying-glass')
+    ->color('text-gray-600 dark:text-gray-500')
+```
+
+### Adding additional classes to icons
+
+You can use the `class()` method of the `Icon` object, and pass in a set of additional CSS classes to add to the SVG:
+
+```php
+use Filament\Support\Icons\Icon;
+
+Icon::make('fas-magnifying-glass')
+    ->class('global-search-input-icon')
+```
+
+### Customizing the appearance of icons without changing the SVG
+
+When registering icons using `FilamentIcon::register()`, you don't need to pass the name of a new icon to use. By using an `Icon` object without a name, you can customize the [size](#customizing-the-size-of-icons), [color](#customizing-the-color-of-icons), and [additional classes](#adding-additional-classes-to-icons) of an icon without changing the SVG:
+
+```php
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Icon;
+
+FilamentIcon::register([
+    'panels::global-search.input.prefix' => Icon::make()
+        ->size('h-6 w-6')
+        ->color('text-gray-600 dark:text-gray-500')
+        ->class('global-search-input-icon'),
 ]);
 ```
 
 ### Allowing users to customize icons from your plugin
 
-If you have built a Filament plugin, your users may want to be able to customize icons in the same way that they can with any core Filament package. This is possible if you replace any manual `@svg()` usages with the `<x-filament::icon>` Blade component. This component allows you to pass in an icon alias, the name of the SVG icon that should be used by default, and any classes or HTML attributes:
+If you have built a Filament plugin, your users may want to be able to customize icons in the same way that they can with any core Filament package. This is possible if you replace any manual `@svg()` usages with the `<x-filament::icon>` Blade component. This component allows you to pass in an icon alias, the name of the SVG icon that should be used by default, default size classes, default color classes, and additional classes or HTML attributes:
 
 ```blade
 <x-filament::icon
-    alias="panels::topbar.global-search.field"
-    icon="heroicon-m-magnifying-glass"
+    name="heroicon-m-magnifying-glass"
+    alias="panels::global-search.input.prefix"
+    color="text-gray-500 dark:text-gray-400"
+    size="h-5 w-5"
     wire:target="search"
-    class="h-5 w-5 text-gray-500 dark:text-gray-400"
 />
 ```
-
-Alternatively, you may pass an SVG element into the component's slot instead of defining a default icon name:
-
-```blade
-<x-filament::icon
-    alias="panels::topbar.global-search.field"
-    wire:target="search"
-    class="h-5 w-5 text-gray-500 dark:text-gray-400"
->
-    <svg>
-        <!-- ... -->
-    </svg>
-</x-filament::icon>
-```
-
-## Available icon aliases
-
-### Panel Builder icon aliases
-
-- `panels::global-search.field` - Global search field
-- `panels::pages.dashboard.navigation-item` - Dashboard navigation item
-- `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
-- `panels::sidebar.collapse-button` - Button to collapse the sidebar
-- `panels::sidebar.expand-button` - Button to expand the sidebar
-- `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
-- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
-- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
-- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
-- `panels::topbar.close-sidebar-button` - Button to close the sidebar
-- `panels::topbar.open-sidebar-button` - Button to open the sidebar
-- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
-- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
-- `panels::user-menu.profile-item` - Profile item in the user menu
-- `panels::user-menu.logout-button` - Button in the user menu to log out
-- `panels::widgets.account.logout-button` - Button in the account widget to log out
-- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
-- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
-
-### Form Builder icon aliases
-
-- `forms:components.checkbox-list.search-field` - Search input in a checkbox list
-- `forms::components.wizard.completed-step` - Completed step in a wizard
-
-### Table Builder icon aliases
-
-- `tables::columns.collapse-button`
-- `tables::filters.remove-all-button` - Button to remove all filters
-- `tables::grouping.collapse-button` - Button to collapse a group of records
-- `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
-- `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
-- `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
-- `tables::search-field` - Search input
-
-### Notifications icon aliases
-
-- `notifications::database.modal.empty-state` - Empty state of the database notifications modal
-- `notifications::notification.close-button` - Button to close a notification
-
-### UI components icon aliases
-
-- `badge.delete-button` - Button to delete a badge
-- `breadcrumbs.separator` - Separator between breadcrumbs
-- `modal.close-button` - Button to close a modal
-- `pagination.previous-button` - Button to go to the previous page
-- `pagination.next-button` - Button to go to the next page
-- `section.collapse-button` - Button to collapse a section
