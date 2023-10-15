@@ -29,8 +29,8 @@
         // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
         is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'gray' => 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            default => 'hover:bg-custom-50 focus:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
+            'gray' => 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
+            default => 'hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10',
         },
     ]);
 
@@ -104,11 +104,16 @@
     >
         @if ($icon)
             <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
-                :wire:loading.remove.delay="$hasLoadingIndicator"
-                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                :class="$iconClasses"
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'alias' => $iconAlias,
+                            'icon' => $icon,
+                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                        ])
+                    )->class([$iconClasses])
+                "
             />
         @endif
 
@@ -121,9 +126,14 @@
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
-                wire:loading.delay=""
-                :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses"
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => $loadingIndicatorTarget,
+                        ])
+                    )->class([$iconClasses])
+                "
             />
         @endif
 

@@ -33,7 +33,7 @@
     }
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline',
+        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus-visible:underline',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         "fi-size-{$size->value}" => $size instanceof ActionSize,
@@ -178,19 +178,29 @@
         @if ($iconPosition === IconPosition::Before)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
         @endif
@@ -200,20 +210,30 @@
         @if ($iconPosition === IconPosition::After)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                     :style="$iconStyles"
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                     :style="$iconStyles"
                 />
             @endif
