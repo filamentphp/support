@@ -15,6 +15,7 @@
     'iconPosition' => IconPosition::Before,
     'iconSize' => IconSize::Small,
     'keyBindings' => null,
+    'loadingIndicator' => true,
     'size' => ActionSize::Medium,
     'tag' => 'div',
     'target' => null,
@@ -47,7 +48,7 @@
         },
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
@@ -119,7 +120,7 @@
                         new \Illuminate\View\ComponentAttributeBag([
                             'alias' => $iconAlias,
                             'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                         ])
                     )->class([$iconClasses])
@@ -183,7 +184,7 @@
                         new \Illuminate\View\ComponentAttributeBag([
                             'alias' => $iconAlias,
                             'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                         ])
                     )->class([$iconClasses])
