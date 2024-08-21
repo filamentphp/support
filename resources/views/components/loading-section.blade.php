@@ -27,7 +27,6 @@
     :lgStart="$columnStart['lg'] ?? null"
     :xlStart="$columnStart['xl'] ?? null"
     :twoXlStart="$columnStart['2xl'] ?? null"
-    wire:replace
     class="fi-loading-section"
 >
     <x-filament::section class="animate-pulse" style="height: {{ $height }}" />
