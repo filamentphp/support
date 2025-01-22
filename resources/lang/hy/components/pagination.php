@@ -9,15 +9,29 @@ return [
     'fields' => [
 
         'records_per_page' => [
-            'label' => 'մեկ էջում',
+
+            'label' => 'Մեկ էջում',
+
+            'options' => [
+                'all' => 'Բոլորը',
+            ],
+
         ],
 
     ],
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Առաջինը',
+        ],
+
         'go_to_page' => [
             'label' => 'Գնալ էջ :page',
+        ],
+
+        'last' => [
+            'label' => 'Վերջինը',
         ],
 
         'next' => [
@@ -25,7 +39,7 @@ return [
         ],
 
         'previous' => [
-            'label' => 'Նախորդ',
+            'label' => 'Նախորդը',
         ],
 
     ],

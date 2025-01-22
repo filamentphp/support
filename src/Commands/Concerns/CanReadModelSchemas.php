@@ -132,7 +132,7 @@ trait CanReadModelSchemas
         };
 
         $values = str_contains($column['type'], '(')
-            ? str_getcsv(Str::between($column['type'], '(', ')'), ',', "'")
+            ? str_getcsv(Str::between($column['type'], '(', ')'), enclosure: "'", escape: '\\')
             : null;
 
         $values = is_null($values) ? [] : match ($type) {
