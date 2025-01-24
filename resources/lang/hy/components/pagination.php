@@ -4,7 +4,7 @@ return [
 
     'label' => 'Էջավորման նավիգացիա',
 
-    'overview' => 'Ցուցադրվում են :total արդյունքներից :first֊ից :last֊ը',
+    'overview' => 'Ցուցադրվում են :total արդյունքներից :first-ից :last-ը',
 
     'fields' => [
 
