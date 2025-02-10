@@ -334,13 +334,12 @@ FilamentAsset::register([
 
 When you run `php artisan filament:assets`, the compiled file will be copied into the `/public` directory.
 
-Finally, you can load this asynchronous Alpine component in your view using `ax-load` attributes and the `FilamentAsset::getAlpineComponentSrc()` method:
+Finally, you can load this asynchronous Alpine component in your view using `x-load` attributes and the `FilamentAsset::getAlpineComponentSrc()` method:
 
 ```blade
 <div
-    x-ignore
-    ax-load
-    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('test-component') }}"
+    x-load
+    x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('test-component') }}"
     x-data="testComponent({
         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
     })"
@@ -351,7 +350,7 @@ Finally, you can load this asynchronous Alpine component in your view using `ax-
 
 This example is for a [custom form field](../forms/fields/custom). It passes the `state` in as a parameter to the `testComponent()` function, which is entangled with a Livewire component property. You can pass in any parameters you want, and access them in the `testComponent()` function. If you're not using a custom form field, you can ignore the `state` parameter in this example.
 
-The `ax-load` attributes come from the [Async Alpine](https://async-alpine.dev/docs/strategies) package, and any features of that package can be used here.
+The `x-load` attributes come from the [Async Alpine](https://async-alpine.dev/docs/strategies) package, and any features of that package can be used here.
 
 ### Registering script data
 
