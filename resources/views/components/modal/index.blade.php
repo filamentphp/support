@@ -106,7 +106,9 @@
 >
     @if ($trigger)
         <div
-            x-on:click="open"
+            @if (! $trigger->attributes->get('disabled'))
+                x-on:click="open"
+            @endif
             {{ $trigger->attributes->class(['fi-modal-trigger flex cursor-pointer']) }}
         >
             {{ $trigger }}
