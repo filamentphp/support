@@ -23,10 +23,19 @@ const upgradeAsyncAlpine = () => {
     })
 }
 
-upgradeAsyncAlpine()
+if (document.body) {
+    upgradeAsyncAlpine()
 
-const observer = new MutationObserver(upgradeAsyncAlpine)
-observer.observe(document.body, { childList: true, subtree: true })
+    const observer = new MutationObserver(upgradeAsyncAlpine)
+    observer.observe(document.body, { childList: true, subtree: true })
+} else {
+    document.addEventListener('DOMContentLoaded', () => {
+        upgradeAsyncAlpine()
+
+        const observer = new MutationObserver(upgradeAsyncAlpine)
+        observer.observe(document.body, { childList: true, subtree: true })
+    })
+}
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(AlpineFloatingUI)
