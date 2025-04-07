@@ -305,7 +305,7 @@ trait HasCellState
         $record = $this->getRecord();
 
         if (! $record) {
-            return $state();
+            return null;
         }
 
         $recordKey = (string) $record->getKey();
