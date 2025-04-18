@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -308,7 +309,11 @@ trait HasCellState
             return null;
         }
 
-        $recordKey = (string) $record->getKey();
+        if ($this instanceof Column) {
+            $recordKey = $this->getLivewire()->getTableRecordKey($record);
+        } else {
+            $recordKey = (string) $record->getKey();
+        }
 
         if (blank($recordKey)) {
             return $state();
