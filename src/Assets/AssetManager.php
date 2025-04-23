@@ -3,6 +3,7 @@
 namespace Filament\Support\Assets;
 
 use Exception;
+use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Arr;
 
@@ -34,6 +35,11 @@ class AssetManager
     protected array $styles = [];
 
     /**
+     * @var array<string, array<Font>>
+     */
+    protected array $fonts = [];
+
+    /**
      * @var array<string, Theme>
      */
     protected array $themes = [];
@@ -50,6 +56,7 @@ class AssetManager
                 $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
                 $asset instanceof Css => $this->styles[$package][] = $asset,
+                $asset instanceof Font => $this->fonts[$package][] = $asset,
                 $asset instanceof Js => $this->scripts[$package][] = $asset,
                 default => null,
             };
@@ -80,11 +87,14 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
-     * @return array<Asset>
+     * @return array<AlpineComponent>
      */
     public function getAlpineComponents(?array $packages = null): array
     {
-        return $this->getAssets($this->alpineComponents, $packages);
+        /** @var array<AlpineComponent> $assets */
+        $assets = $this->getAssets($this->alpineComponents, $packages);
+
+        return $assets;
     }
 
     public function getAlpineComponentSrc(string $id, string $package = 'app'): string
@@ -114,7 +124,7 @@ class AssetManager
         foreach ($this->scriptData as $package => $packageData) {
             if (
                 ($packages !== null) &&
-                ($package !== null) &&
+                filled($package) &&
                 (! in_array($package, $packages))
             ) {
                 continue;
@@ -147,7 +157,7 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
-     * @return array<Asset>
+     * @return array<Js>
      */
     public function getScripts(?array $packages = null, bool $withCore = true): array
     {
@@ -187,11 +197,26 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
-     * @return array<Asset>
+     * @return array<Font>
+     */
+    public function getFonts(?array $packages = null): array
+    {
+        /** @var array<Font> $assets */
+        $assets = $this->getAssets($this->fonts, $packages);
+
+        return $assets;
+    }
+
+    /**
+     * @param  array<string> | null  $packages
+     * @return array<Css>
      */
     public function getStyles(?array $packages = null): array
     {
-        return $this->getAssets($this->styles, $packages);
+        /** @var array<Css> $assets */
+        $assets = $this->getAssets($this->styles, $packages);
+
+        return $assets;
     }
 
     public function getStyleHref(string $id, string $package = 'app'): string
@@ -221,7 +246,7 @@ class AssetManager
         foreach ($this->cssVariables as $package => $packageVariables) {
             if (
                 ($packages !== null) &&
-                ($package !== null) &&
+                filled($package) &&
                 (! in_array($package, $packages))
             ) {
                 continue;
@@ -241,18 +266,50 @@ class AssetManager
      */
     public function renderStyles(?array $packages = null): string
     {
-        $variables = $this->getCssVariables($packages);
+        $cssVariables = $this->getCssVariables($packages);
+        $customColors = [];
 
-        foreach (FilamentColor::getColors() as $name => $shades) {
-            foreach ($shades as $shade => $color) {
-                $variables["{$name}-{$shade}"] = $color;
+        $defaultColorNames = array_keys(ColorManager::DEFAULT_COLORS);
+
+        foreach (FilamentColor::getColors() as $name => $palette) {
+            foreach (array_keys($palette) as $shade) {
+                $cssVariables["{$name}-{$shade}"] = $this->resolveColorShadeFromPalette($palette, $shade);
+            }
+
+            if (! in_array($name, $defaultColorNames)) {
+                $customColors[$name] = array_keys($palette);
             }
         }
 
         return view('filament::assets', [
-            'assets' => $this->getStyles($packages),
-            'cssVariables' => $variables,
+            'assets' => [
+                ...$this->getStyles($packages),
+                ...array_map(
+                    fn (Font $font): Css => $font->getStyle(),
+                    $this->getFonts($packages),
+                ),
+            ],
+            'cssVariables' => $cssVariables,
+            'customColors' => $customColors,
         ])->render();
+    }
+
+    /**
+     * @param  array<int | string, string | int>  $palette
+     */
+    protected function resolveColorShadeFromPalette(array $palette, string | int $shade): string
+    {
+        $color = $palette[$shade];
+
+        while (! str_starts_with($color, 'oklch(')) {
+            if ($color === 0) {
+                return 'oklch(1 0 0)';
+            }
+
+            $color = $palette[$color];
+        }
+
+        return $color;
     }
 
     public function getTheme(?string $id): ?Theme

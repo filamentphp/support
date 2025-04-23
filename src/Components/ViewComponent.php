@@ -4,15 +4,14 @@ namespace Filament\Support\Components;
 
 use Closure;
 use Exception;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
 
 abstract class ViewComponent extends Component implements Htmlable
 {
-    /**
-     * @var view-string
-     */
     protected string $view;
 
     /**
@@ -26,6 +25,8 @@ abstract class ViewComponent extends Component implements Htmlable
     protected array $viewData = [];
 
     protected string $viewIdentifier;
+
+    protected View $viewInstance;
 
     /**
      * @param  view-string | null  $view
@@ -93,6 +94,11 @@ abstract class ViewComponent extends Component implements Htmlable
         throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
     }
 
+    public function hasView(): bool
+    {
+        return isset($this->view) || $this->getDefaultView();
+    }
+
     /**
      * @return view-string | null
      */
@@ -103,17 +109,41 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function toHtml(): string
     {
+        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            return $this->toEmbeddedHtml();
+        }
+
         return $this->render()->render();
+    }
+
+    public function toHtmlString(): ?HtmlString
+    {
+        $html = $this->toHtml();
+
+        if (blank($html)) {
+            return null;
+        }
+
+        return new HtmlString($html);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [];
     }
 
     public function render(): View
     {
-        return view(
+        return $this->viewInstance ??= view(
             $this->getView(),
             [
                 'attributes' => new ComponentAttributeBag,
                 ...$this->extractPublicMethods(),
                 ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                ...$this->getExtraViewData(),
                 ...$this->viewData,
             ],
         );

@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Enums\IconPosition;
 
@@ -9,22 +10,16 @@ trait HasBadge
 {
     protected string | int | float | Closure | null $badge = null;
 
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
-     */
-    protected string | array | Closure | null $badgeColor = null;
+    protected string | Closure | null $badgeColor = null;
 
-    protected string | Closure | null $badgeIcon = null;
+    protected string | BackedEnum | Closure | null $badgeIcon = null;
+
+    protected string | Closure | null $badgeTooltip = null;
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | int | float | Closure | null $badge): static
     {
-        if (func_num_args() === 0) {
-            /** @phpstan-ignore-next-line */
-            return $this->view(static::BADGE_VIEW);
-        }
-
         $this->badge = $badge;
 
         return $this;
@@ -38,19 +33,23 @@ trait HasBadge
         return $this->badge($indicator);
     }
 
-    /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
-     */
-    public function badgeColor(string | array | Closure | null $color): static
+    public function badgeColor(string | Closure | null $color): static
     {
         $this->badgeColor = $color;
 
         return $this;
     }
 
-    public function badgeIcon(string | Closure | null $icon): static
+    public function badgeIcon(string | BackedEnum | Closure | null $icon): static
     {
         $this->badgeIcon = $icon;
+
+        return $this;
+    }
+
+    public function badgeTooltip(string | Closure | null $tooltip): static
+    {
+        $this->badgeTooltip = $tooltip;
 
         return $this;
     }
@@ -64,10 +63,8 @@ trait HasBadge
 
     /**
      * @deprecated Use `badgeColor()` instead.
-     *
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
      */
-    public function indicatorColor(string | array | Closure | null $color): static
+    public function indicatorColor(string | Closure | null $color): static
     {
         return $this->badgeColor($color);
     }
@@ -77,17 +74,19 @@ trait HasBadge
         return $this->evaluate($this->badge);
     }
 
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(): ?string
     {
         return $this->evaluate($this->badgeColor);
     }
 
-    public function getBadgeIcon(): ?string
+    public function getBadgeIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->badgeIcon);
+    }
+
+    public function getBadgeTooltip(): ?string
+    {
+        return $this->evaluate($this->badgeTooltip);
     }
 
     public function getBadgeIconPosition(): IconPosition | string
