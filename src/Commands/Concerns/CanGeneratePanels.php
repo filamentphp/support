@@ -2,9 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
-use Filament\Commands\FileGenerators\PanelProviderClassGenerator;
 use Filament\Facades\Filament;
-use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -15,64 +13,65 @@ trait CanGeneratePanels
 {
     use CanManipulateFiles;
 
-    public function generatePanel(?string $id = null, string $defaultId = '', string $placeholderId = '', bool $isForced = false): void
+    public function generatePanel(?string $id = null, string $default = '', string $placeholder = '', bool $force = false): bool
     {
         $id = Str::lcfirst($id ?? text(
-            label: 'What is the panel\'s ID?',
-            placeholder: $placeholderId,
-            default: $defaultId,
+            label: 'What is the ID?',
+            placeholder: $placeholder,
+            default: $default,
             required: true,
             validate: fn (string $value) => match (true) {
                 preg_match('/^[a-zA-Z].*/', $value) !== false => null,
                 default => 'The ID must start with a letter, and not a number or special character.',
             },
-            hint: 'It must be unique to any others you have, and is used to reference the panel in your code.',
         ));
 
-        $basename = (string) str($id)
+        $class = (string) str($id)
             ->studly()
             ->append('PanelProvider');
 
         $path = app_path(
-            (string) str($basename)
+            (string) str($class)
                 ->prepend('Providers/Filament/')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
 
-        if (! $isForced && $this->checkForCollision([$path])) {
-            throw new FailureCommandOutput;
+        if (! $force && $this->checkForCollision([$path])) {
+            return false;
         }
-
-        $fqn = "App\\Providers\\Filament\\{$basename}";
 
         if (empty(Filament::getPanels())) {
-            $this->writeFile($path, app(PanelProviderClassGenerator::class, [
-                'fqn' => $fqn,
+            $this->copyStubToApp('DefaultPanelProvider', $path, [
+                'class' => $class,
                 'id' => $id,
-                'isDefault' => true,
-            ]));
+            ]);
         } else {
-            $this->writeFile($path, app(PanelProviderClassGenerator::class, [
-                'fqn' => $fqn,
+            $this->copyStubToApp('PanelProvider', $path, [
+                'class' => $class,
+                'directory' => str($id)->studly(),
                 'id' => $id,
-            ]));
+            ]);
         }
 
-        $hasBootstrapProvidersFile = file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
+        $isLaravel11OrHigherWithBootstrapProvidersFile = version_compare(App::version(), '11.0', '>=') &&
+            /** @phpstan-ignore-next-line */
+            file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
 
-        if ($hasBootstrapProvidersFile) {
+        if ($isLaravel11OrHigherWithBootstrapProvidersFile) {
+            /** @phpstan-ignore-next-line */
             ServiceProvider::addProviderToBootstrapFile(
-                $fqn,
+                "App\\Providers\\Filament\\{$class}",
+                /** @phpstan-ignore-next-line */
                 $bootstrapProvidersPath,
             );
         } else {
             $appConfig = file_get_contents(config_path('app.php'));
 
-            if (! Str::contains($appConfig, "{$fqn}::class")) {
+            if (! Str::contains($appConfig, "App\\Providers\\Filament\\{$class}::class")) {
                 file_put_contents(config_path('app.php'), str_replace(
                     'App\\Providers\\RouteServiceProvider::class,',
-                    "{$fqn}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
+                    "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
                     $appConfig,
                 ));
             }
@@ -80,10 +79,12 @@ trait CanGeneratePanels
 
         $this->components->info("Filament panel [{$path}] created successfully.");
 
-        if ($hasBootstrapProvidersFile) {
-            $this->components->warn("We've attempted to register the {$basename} in your [bootstrap/providers.php] file. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the array.");
+        if ($isLaravel11OrHigherWithBootstrapProvidersFile) {
+            $this->components->warn("We've attempted to register the {$class} in your [bootstrap/providers.php] file. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the array.");
         } else {
-            $this->components->warn("We've attempted to register the {$basename} in your [config/app.php] file as a service provider.  If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.");
+            $this->components->warn("We've attempted to register the {$class} in your [config/app.php] file as a service provider.  If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.");
         }
+
+        return true;
     }
 }

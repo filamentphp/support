@@ -2,9 +2,7 @@
 
 namespace Filament\Support\Facades;
 
-use BackedEnum;
 use Filament\Support\Icons\IconManager;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -20,11 +18,11 @@ class FilamentIcon extends Facade
     }
 
     /**
-     * @param  array<string, string | BackedEnum | Htmlable>  $icons
+     * @param  array<string, string>  $icons
      */
     public static function register(array $icons): void
     {
-        static::resolved(function (IconManager $iconManager) use ($icons): void {
+        static::resolved(function (IconManager $iconManager) use ($icons) {
             $iconManager->register($icons);
         });
     }

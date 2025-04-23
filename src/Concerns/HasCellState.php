@@ -4,13 +4,11 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -119,12 +117,11 @@ trait HasCellState
             return null;
         }
 
-        $attributeName = $this->getAttributeName($record);
-        $fullAttributeName = $this->getFullAttributeName($record);
+        $relationshipAttribute = $this->getRelationshipAttribute();
 
         $state = collect($this->getRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($attributeName, $record->attributesToArray()))
-            ->pluck($fullAttributeName)
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
+            ->pluck($relationshipAttribute)
             ->filter(fn ($state): bool => filled($state))
             ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
@@ -155,13 +152,7 @@ trait HasCellState
 
     public function hasRelationship(Model $record): bool
     {
-        $name = $this->getName();
-
-        if (! str($name)->contains('.')) {
-            return false;
-        }
-
-        return $record->isRelation((string) str($name)->before('.'));
+        return $this->getRelationship($record) !== null;
     }
 
     /**
@@ -172,29 +163,22 @@ trait HasCellState
         return $this->hasRelationship($record);
     }
 
-    public function getRelationship(Model $record, ?string $relationshipName = null): ?Relation
+    public function getRelationship(Model $record, ?string $name = null): ?Relation
     {
-        if (isset($relationshipName)) {
-            $nameParts = explode('.', $relationshipName);
-        } else {
-            $name = $this->getName();
-
-            if (! str($name)->contains('.')) {
-                return null;
-            }
-
-            $nameParts = explode('.', $name);
-            array_pop($nameParts);
+        if (blank($name) && (! str($this->getName())->contains('.'))) {
+            return null;
         }
 
         $relationship = null;
 
-        foreach ($nameParts as $namePart) {
-            if (! $record->isRelation($namePart)) {
+        foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+            if (! $record->isRelation($nestedRelationshipName)) {
+                $relationship = null;
+
                 break;
             }
 
-            $relationship = $record->{$namePart}();
+            $relationship = $record->{$nestedRelationshipName}();
             $record = $relationship->getRelated();
         }
 
@@ -209,7 +193,7 @@ trait HasCellState
     {
         $results = [];
 
-        $relationships ??= explode('.', $this->getRelationshipName($record));
+        $relationships ??= explode('.', $this->getRelationshipName());
 
         while (count($relationships)) {
             $currentRelationshipName = array_shift($relationships);
@@ -255,48 +239,15 @@ trait HasCellState
         return $results;
     }
 
-    public function getAttributeName(Model $record): string
+    public function getRelationshipAttribute(?string $name = null): string
     {
-        $name = $this->getName();
+        $name ??= $this->getName();
 
         if (! str($name)->contains('.')) {
             return $name;
         }
 
-        $nameParts = explode('.', $name);
-
-        foreach ($nameParts as $namePart) {
-            if (! $record->isRelation($namePart)) {
-                break;
-            }
-
-            array_shift($nameParts);
-            $record = $record->{$namePart}()->getRelated();
-        }
-
-        return Arr::first($nameParts);
-    }
-
-    public function getFullAttributeName(Model $record): string
-    {
-        $name = $this->getName();
-
-        if (! str($name)->contains('.')) {
-            return $name;
-        }
-
-        $nameParts = explode('.', $name);
-
-        foreach ($nameParts as $namePart) {
-            if (! $record->isRelation($namePart)) {
-                break;
-            }
-
-            array_shift($nameParts);
-            $record = $record->{$namePart}()->getRelated();
-        }
-
-        return implode('.', $nameParts);
+        return (string) str($name)->afterLast('.');
     }
 
     public function getInverseRelationshipName(Model $record): string
@@ -305,17 +256,10 @@ trait HasCellState
             return $this->inverseRelationshipName;
         }
 
-        $nameParts = explode('.', $this->getName());
-        array_pop($nameParts);
+        $inverseRelationships = [];
 
-        $inverseRelationshipParts = [];
-
-        foreach ($nameParts as $namePart) {
-            if (! $record->isRelation($namePart)) {
-                break;
-            }
-
-            $relationship = $record->{$namePart}();
+        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+            $relationship = $record->{$nestedRelationshipName}();
             $record = $relationship->getRelated();
 
             $inverseNestedRelationshipName = (string) str(class_basename($relationship->getParent()::class))
@@ -331,44 +275,30 @@ trait HasCellState
                 // The conventional relationship doesn't exist, but we can
                 // attempt to use the original relationship name instead.
 
-                if (! $record->isRelation($namePart)) {
+                if (! $record->isRelation($nestedRelationshipName)) {
                     $recordClass = $record::class;
 
                     throw new Exception("When trying to guess the inverse relationship for column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
                 }
 
-                $inverseNestedRelationshipName = $namePart;
+                $inverseNestedRelationshipName = $nestedRelationshipName;
             }
 
-            array_unshift($inverseRelationshipParts, $inverseNestedRelationshipName);
+            array_unshift($inverseRelationships, $inverseNestedRelationshipName);
         }
 
-        return implode('.', $inverseRelationshipParts);
+        return implode('.', $inverseRelationships);
     }
 
-    public function getRelationshipName(Model $record): ?string
+    public function getRelationshipName(?string $name = null): ?string
     {
-        $name = $this->getName();
+        $name ??= $this->getName();
 
         if (! str($name)->contains('.')) {
             return null;
         }
 
-        $nameParts = explode('.', $name);
-        array_pop($nameParts);
-
-        $relationshipParts = [];
-
-        foreach ($nameParts as $namePart) {
-            if (! $record->isRelation($namePart)) {
-                break;
-            }
-
-            $relationshipParts[] = $namePart;
-            $record = $record->{$namePart}()->getRelated();
-        }
-
-        return implode('.', $relationshipParts);
+        return (string) str($name)->beforeLast('.');
     }
 
     protected function cacheState(Closure $state): mixed
@@ -381,8 +311,6 @@ trait HasCellState
 
         if ($this instanceof Column) {
             $recordKey = $this->getLivewire()->getTableRecordKey($record);
-        } elseif (is_array($record)) { /** @phpstan-ignore function.impossibleType */
-            $recordKey = (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
         } else {
             $recordKey = (string) $record->getKey();
         }

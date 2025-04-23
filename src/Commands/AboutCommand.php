@@ -8,9 +8,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 #[AsCommand(name: 'filament:about')]
 class AboutCommand extends Command
 {
-    protected $description = 'Display basic information about Filament packages that are installed';
+    protected $signature = 'filament:about';
 
-    protected $name = 'filament:about';
+    protected $description = 'Display basic information about Filament packages that are installed';
 
     public function handle(): void
     {

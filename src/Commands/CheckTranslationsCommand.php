@@ -10,8 +10,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Exception\InvalidOptionException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\SplFileInfo;
 
 use function Laravel\Prompts\info;
@@ -21,39 +19,11 @@ use function Laravel\Prompts\warning;
 #[AsCommand(name: 'filament:check-translations')]
 class CheckTranslationsCommand extends Command implements PromptsForMissingInput
 {
+    protected $signature = 'filament:check-translations
+                            {locales* : The locales to check.}
+                            {--source=vendor : The directory containing the translations to check - either \'vendor\' or \'app\'.}';
+
     protected $description = 'Check for missing and removed translations';
-
-    protected $name = 'filament:check-translations';
-
-    /**
-     * @return array<InputArgument>
-     */
-    protected function getArguments(): array
-    {
-        return [
-            new InputArgument(
-                name: 'locales',
-                mode: InputArgument::IS_ARRAY,
-                description: 'The locales to check',
-            ),
-        ];
-    }
-
-    /**
-     * @return array<InputOption>
-     */
-    protected function getOptions(): array
-    {
-        return [
-            new InputOption(
-                name: 'source',
-                shortcut: null,
-                mode: InputOption::VALUE_REQUIRED,
-                description: 'The directory containing the translations to check - either \'vendor\' or \'app\'',
-                default: 'vendor',
-            ),
-        ];
-    }
 
     public function handle(): int
     {
@@ -62,12 +32,12 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
         $this->scan('forms');
         $this->scan('infolists');
         $this->scan('notifications');
-        $this->scan('schemas');
         $this->scan('spark-billing-provider');
         $this->scan('spatie-laravel-google-fonts-plugin');
         $this->scan('spatie-laravel-media-library-plugin');
         $this->scan('spatie-laravel-settings-plugin');
         $this->scan('spatie-laravel-tags-plugin');
+        $this->scan('spatie-laravel-translatable-plugin');
         $this->scan('support');
         $this->scan('tables');
         $this->scan('widgets');
@@ -95,7 +65,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                 $locales = $this->argument('locales'),
                 fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))
             )
-            ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package): void {
+            ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package) {
                 $files = $filesystem->allFiles($localeDir);
                 $baseFiles = $filesystem->allFiles(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en']));
 
@@ -144,24 +114,24 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                             ],
                         ];
                     })
-                    ->tap(function (Collection $files) use ($locale, $package): void {
+                    ->tap(function (Collection $files) use ($locale, $package) {
                         $missingKeysCount = $files->sum(fn ($file): int => count($file['missing']));
                         $removedKeysCount = $files->sum(fn ($file): int => count($file['removed']));
 
                         $locale = locale_get_display_name($locale, 'en');
 
-                        if ((! $missingKeysCount) && (! $removedKeysCount)) {
+                        if ($missingKeysCount == 0 && $removedKeysCount == 0) {
                             info("[✓] Package filament/{$package} has no missing or removed translation keys for {$locale}!\n");
-                        } elseif ($missingKeysCount && $removedKeysCount) {
+                        } elseif ($missingKeysCount > 0 && $removedKeysCount > 0) {
                             warning("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " and {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
-                        } elseif ($missingKeysCount) {
+                        } elseif ($missingKeysCount > 0) {
                             warning("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " for {$locale}.\n");
                         } else {
                             warning("[!] Package filament/{$package} has {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
                         }
                     })
                     ->filter(static fn ($keys): bool => count($keys['missing']) || count($keys['removed']))
-                    ->each(function ($keys, string $file): void {
+                    ->each(function ($keys, string $file) {
                         table(
                             [$file, ''],
                             [

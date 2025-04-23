@@ -17,7 +17,7 @@
     role="navigation"
     {{
         $attributes->class([
-            'fi-pagination',
+            'fi-pagination grid grid-cols-[1fr_auto_1fr] items-center gap-x-3',
             'fi-simple' => $isSimple,
         ])
     }}
@@ -36,14 +36,16 @@
             rel="prev"
             :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.previous'"
-            class="fi-pagination-previous-btn"
+            class="fi-pagination-previous-btn justify-self-start"
         >
             {{ __('filament::components/pagination.actions.previous.label') }}
         </x-filament::button>
     @endif
 
     @if (! $isSimple)
-        <span class="fi-pagination-overview">
+        <span
+            class="fi-pagination-overview text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
             {{
                 trans_choice(
                     'filament::components/pagination.overview',
@@ -59,7 +61,7 @@
     @endif
 
     @if (count($pageOptions) > 1)
-        <div class="fi-pagination-records-per-page-select-ctn">
+        <div class="col-start-2 justify-self-center">
             <label class="fi-pagination-records-per-page-select fi-compact">
                 <x-filament::input.wrapper>
                     <x-filament::input.select
@@ -73,7 +75,7 @@
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
 
-                <span class="fi-sr-only">
+                <span class="sr-only">
                     {{ __('filament::components/pagination.fields.records_per_page.label') }}
                 </span>
             </label>
@@ -110,19 +112,21 @@
             rel="next"
             :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.next'"
-            class="fi-pagination-next-btn"
+            class="fi-pagination-next-btn col-start-3 justify-self-end"
         >
             {{ __('filament::components/pagination.actions.next.label') }}
         </x-filament::button>
     @endif
 
     @if ((! $isSimple) && $paginator->hasPages())
-        <ol class="fi-pagination-items">
+        <ol
+            class="fi-pagination-items justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20"
+        >
             @if (! $paginator->onFirstPage())
                 @if ($extremeLinks)
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.first.label')"
-                        :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronDoubleRight : \Filament\Support\Icons\Heroicon::ChevronDoubleLeft"
+                        :icon="$isRtl ? 'heroicon-m-chevron-double-right' : 'heroicon-m-chevron-double-left'"
                         :icon-alias="$isRtl ? 'pagination.first-button.rtl' : 'pagination.first-button'"
                         rel="first"
                         :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
@@ -132,7 +136,7 @@
 
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.previous.label')"
-                    :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronRight : \Filament\Support\Icons\Heroicon::ChevronLeft"
+                    :icon="$isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left'"
                     {{-- @deprecated Use `pagination.previous-button.rtl` instead of `pagination.previous-button` for RTL. --}}
                     :icon-alias="$isRtl ? ['pagination.previous-button.rtl', 'pagination.previous-button'] : 'pagination.previous-button'"
                     rel="prev"
@@ -162,7 +166,7 @@
             @if ($paginator->hasMorePages())
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.next.label')"
-                    :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronLeft : \Filament\Support\Icons\Heroicon::ChevronRight"
+                    :icon="$isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right'"
                     {{-- @deprecated Use `pagination.next-button.rtl` instead of `pagination.next-button` for RTL. --}}
                     :icon-alias="$isRtl ? ['pagination.next-button.rtl', 'pagination.next-button'] : 'pagination.next-button'"
                     rel="next"
@@ -173,7 +177,7 @@
                 @if ($extremeLinks)
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.last.label')"
-                        :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronDoubleLeft : \Filament\Support\Icons\Heroicon::ChevronDoubleRight"
+                        :icon="$isRtl ? 'heroicon-m-chevron-double-left' : 'heroicon-m-chevron-double-right'"
                         :icon-alias="$isRtl ? 'pagination.last-button.rtl' : 'pagination.last-button'"
                         rel="last"
                         :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"

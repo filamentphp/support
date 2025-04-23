@@ -2,7 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
-trait CanIndentStrings /** @phpstan-ignore trait.unused */
+trait CanIndentStrings
 {
     protected function indentString(string $string, int $level = 1): string
     {

@@ -1,5 +1,3 @@
-<x-filament::section
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
->
+<x-filament::section>
     {{ $slot }}
 </x-filament::section>

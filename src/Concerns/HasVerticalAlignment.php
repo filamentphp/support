@@ -33,12 +33,6 @@ trait HasVerticalAlignment
 
     public function getVerticalAlignment(): VerticalAlignment | string | null
     {
-        $alignment = $this->evaluate($this->verticalAlignment);
-
-        if (! is_string($alignment)) {
-            return $alignment;
-        }
-
-        return VerticalAlignment::tryFrom($alignment) ?? $alignment;
+        return $this->evaluate($this->verticalAlignment);
     }
 }

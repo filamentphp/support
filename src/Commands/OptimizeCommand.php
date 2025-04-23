@@ -12,9 +12,9 @@ class OptimizeCommand extends Command
 {
     use CanCachePanelComponents;
 
-    protected $description = 'Cache components and Blade icons to increase performance';
+    protected $signature = 'filament:optimize';
 
-    protected $name = 'filament:optimize';
+    protected $description = 'Cache components and Blade icons to increase performance';
 
     public function handle(): int
     {
