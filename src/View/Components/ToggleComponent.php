@@ -11,9 +11,9 @@ class ToggleComponent implements HasColor, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color
-     * @return array<string>
+     * @return array<string, int>
      */
-    public function getColorClasses(array $color): array
+    public function getColorMap(array $color): array
     {
         $gray = FilamentColor::getColor('gray');
 
@@ -70,9 +70,9 @@ class ToggleComponent implements HasColor, HasDefaultGrayColor
         $darkBg ??= 200;
 
         return [
-            "fi-bg-color-{$bg}",
-            "fi-text-color-{$text}",
-            "dark:fi-bg-color-{$darkBg}",
+            'bg' => $bg,
+            'text' => $text,
+            'dark:bg' => $darkBg,
         ];
     }
 }

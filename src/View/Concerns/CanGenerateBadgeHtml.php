@@ -20,11 +20,12 @@ trait CanGenerateBadgeHtml
     /**
      * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      *
+     * @param  string | array<string> | null  $color
      * @param  array<string>  $keyBindings
      */
     public function generateBadgeHtml(
         ComponentAttributeBag $attributes,
-        ?string $color = null,
+        string | array | null $color = null,
         ?string $form = null,
         ?string $formId = null,
         bool $hasLoadingIndicator = true,

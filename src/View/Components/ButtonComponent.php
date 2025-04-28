@@ -15,9 +15,9 @@ class ButtonComponent implements HasColor, HasDefaultGrayColor
 
     /**
      * @param  array<int, string>  $color
-     * @return array<string>
+     * @return array<string, int>
      */
-    public function getColorClasses(array $color): array
+    public function getColorMap(array $color): array
     {
         if ($this->isOutlined) {
             return $this->getOutlinedColorClasses($color);
@@ -85,20 +85,20 @@ class ButtonComponent implements HasColor, HasDefaultGrayColor
         $darkHoverText = $textColors[$darkHoverBg];
 
         return [
-            "fi-bg-color-{$bg}",
-            "hover:fi-bg-color-{$hoverBg}",
-            "dark:fi-bg-color-{$darkBg}",
-            "dark:hover:fi-bg-color-{$darkHoverBg}",
-            "fi-text-color-{$text}",
-            "hover:fi-text-color-{$hoverText}",
-            "dark:fi-text-color-{$darkText}",
-            "dark:hover:fi-text-color-{$darkHoverText}",
+            'bg' => $bg,
+            'hover:bg' => $hoverBg,
+            'dark:bg' => $darkBg,
+            'dark:hover:bg' => $darkHoverBg,
+            'text' => $text,
+            'hover:text' => $hoverText,
+            'dark:text' => $darkText,
+            'dark:hover:text' => $darkHoverText,
         ];
     }
 
     /**
      * @param  array<int, string>  $color
-     * @return array<string>
+     * @return array<string, int>
      */
     public function getOutlinedColorClasses(array $color): array
     {
@@ -137,8 +137,8 @@ class ButtonComponent implements HasColor, HasDefaultGrayColor
         $darkText ??= 200;
 
         return [
-            "fi-text-color-{$text}",
-            "dark:fi-text-color-{$darkText}",
+            'text' => $text,
+            'dark:text' => $darkText,
         ];
     }
 }

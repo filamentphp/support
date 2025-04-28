@@ -156,7 +156,13 @@ class SupportServiceProvider extends PackageServiceProvider
             return preg_replace('/\s*@trim\s*/m', '', $view);
         });
 
-        ComponentAttributeBag::macro('color', function (string | HasColor $component, ?string $color): ComponentAttributeBag {
+        ComponentAttributeBag::macro('color', function (string | HasColor $component, string | array | null $color): ComponentAttributeBag {
+            if (is_array($color)) {
+                return $this
+                    ->class(['fi-color'])
+                    ->style(FilamentColor::getComponentCustomStyles($component, $color));
+            }
+
             return $this->class(FilamentColor::getComponentClasses($component, $color));
         });
 

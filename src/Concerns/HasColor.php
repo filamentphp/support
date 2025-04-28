@@ -6,25 +6,40 @@ use Closure;
 
 trait HasColor
 {
-    protected string | Closure | null $color = null;
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $color = null;
 
-    protected string | Closure | null $defaultColor = null;
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $defaultColor = null;
 
-    public function color(string | Closure | null $color): static
+    /**
+     * @param  string | array<string> | Closure | null  $color
+     */
+    public function color(string | array | Closure | null $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    public function defaultColor(string | Closure | null $color): static
+    /**
+     * @param  string | array<string> | Closure | null  $color
+     */
+    public function defaultColor(string | array | Closure | null $color): static
     {
         $this->defaultColor = $color;
 
         return $this;
     }
 
-    public function getColor(): ?string
+    /**
+     * @return string | array<string> | null
+     */
+    public function getColor(): string | array | null
     {
         return $this->evaluate($this->color) ?? $this->evaluate($this->defaultColor);
     }

@@ -34,10 +34,6 @@
 
     $iconColor ??= $color;
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        ...\Filament\Support\get_component_color_classes(IconComponent::class, $iconColor),
-    ]);
-
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget);
@@ -104,7 +100,7 @@
             \Filament\Support\generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses]), size: $iconSize)
+            ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
     @endif
 
@@ -124,7 +120,7 @@
             \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses]), size: $iconSize)
+            ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
     @endif
 
@@ -143,10 +139,7 @@
                         theme: $store.theme,
                     }"
                 @endif
-                @class([
-                    'fi-badge',
-                    ...\Filament\Support\get_component_color_classes(BadgeComponent::class, $badgeColor),
-                ])
+                {{ (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
             >
                 {{ $badge }}
             </span>

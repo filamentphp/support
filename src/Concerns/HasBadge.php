@@ -10,7 +10,10 @@ trait HasBadge
 {
     protected string | int | float | Closure | null $badge = null;
 
-    protected string | Closure | null $badgeColor = null;
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $badgeColor = null;
 
     protected string | BackedEnum | Closure | null $badgeIcon = null;
 
@@ -33,7 +36,10 @@ trait HasBadge
         return $this->badge($indicator);
     }
 
-    public function badgeColor(string | Closure | null $color): static
+    /**
+     * @param  string | array<string> | Closure | null  $color
+     */
+    public function badgeColor(string | array | Closure | null $color): static
     {
         $this->badgeColor = $color;
 
@@ -74,7 +80,10 @@ trait HasBadge
         return $this->evaluate($this->badge);
     }
 
-    public function getBadgeColor(): ?string
+    /**
+     * @return string | array<string> | null
+     */
+    public function getBadgeColor(): string | array | null
     {
         return $this->evaluate($this->badgeColor);
     }

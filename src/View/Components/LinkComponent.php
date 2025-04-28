@@ -11,9 +11,9 @@ class LinkComponent implements HasColor, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color
-     * @return array<string>
+     * @return array<string, int>
      */
-    public function getColorClasses(array $color): array
+    public function getColorMap(array $color): array
     {
         $gray = FilamentColor::getColor('gray');
 
@@ -50,8 +50,8 @@ class LinkComponent implements HasColor, HasDefaultGrayColor
         $darkText ??= 200;
 
         return [
-            "fi-text-color-{$text}",
-            "dark:fi-text-color-{$darkText}",
+            'text' => $text,
+            'dark:text' => $darkText,
         ];
     }
 }

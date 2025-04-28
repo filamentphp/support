@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<string, array<int | string, string | int>> getColors()
  * @method static ?array<int | string, string | int> getColor(string $color)
  * @method static array<string> getComponentClasses(class-string<HasColor> | HasColor $component, ?string $color)
+ * @method static array<string> getComponentCustomStyles(class-string<HasColor> | HasColor $component, array<string> $color)
  *
  * @see ColorManager
  */

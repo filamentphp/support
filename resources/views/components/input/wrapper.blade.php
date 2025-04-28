@@ -19,6 +19,7 @@
 
 @php
     use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
+    use Illuminate\View\ComponentAttributeBag;
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -36,10 +37,6 @@
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
-
-    $getIconClasses = fn (string $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
-        ...\Filament\Support\get_component_color_classes(IconComponent::class, $color),
-    ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
 
@@ -95,7 +92,7 @@
                         'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                     ], escape: false)
-                    ->class([$getIconClasses($prefixIconColor)]))
+                    ->color(IconComponent::class, $prefixIconColor))
             }}
 
             @if ($hasLoadingIndicator)
@@ -103,7 +100,7 @@
                     \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                         'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
                         'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
-                    ]))->class([$getIconClasses()]))
+                    ]))->color(IconComponent::class, 'gray'))
                 }}
             @endif
 
@@ -151,7 +148,7 @@
                         'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                     ], escape: false)
-                    ->class([$getIconClasses($suffixIconColor)]))
+                    ->color(IconComponent::class, $suffixIconColor))
             }}
 
             @if (count($suffixActions))

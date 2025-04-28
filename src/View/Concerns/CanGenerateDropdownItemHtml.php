@@ -8,28 +8,28 @@ use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
-use function Filament\Support\get_component_color_classes;
 
 trait CanGenerateDropdownItemHtml
 {
     /**
      * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      *
+     * @param  string | array<string> | null  $badgeColor,
+     * @param  string | array<string> | null  $color,
      * @param  array<string>  $keyBindings
      */
     public function generateDropdownItemHtml(
         ComponentAttributeBag $attributes,
         string | Htmlable | null $badge = null,
-        ?string $badgeColor = null,
+        string | array | null $badgeColor = null,
         ?string $badgeTooltip = null,
-        ?string $color = 'primary',
+        string | array | null $color = 'primary',
         bool $hasLoadingIndicator = true,
         ?bool $hasSpaMode = null,
         ?string $href = null,
@@ -51,10 +51,6 @@ trait CanGenerateDropdownItemHtml
         }
 
         $iconColor ??= $color;
-
-        $iconClasses = Arr::toCssClasses([
-            ...get_component_color_classes(IconComponent::class, $iconColor),
-        ]);
 
         $wireTarget = $hasLoadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -119,7 +115,7 @@ trait CanGenerateDropdownItemHtml
             <?= $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses]), size: $iconSize)->toHtml() : '' ?>
+            ]))->color(IconComponent::class, $iconColor), size: $iconSize)->toHtml() : '' ?>
             <?= $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => $loadingIndicatorTarget,
@@ -137,10 +133,7 @@ trait CanGenerateDropdownItemHtml
                             theme: $store.theme,
                         }"
                     <?php } ?>
-                    class="<?= Arr::toCssClasses([
-                        'fi-badge',
-                        ...get_component_color_classes(BadgeComponent::class, $badgeColor),
-                    ]) ?>"
+                    <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge'])->toHtml() ?>
                 >
                     <?= e($badge) ?>
                 </span>

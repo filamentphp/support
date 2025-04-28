@@ -159,11 +159,12 @@
                 {{ $badge }}
             @else
                 <span
-                    @class([
-                        'fi-badge',
-                        ...\Filament\Support\get_component_color_classes(BadgeComponent::class, $badgeColor),
-                        ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
-                    ])
+                    {{
+                        (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                            'fi-badge',
+                            ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                        ])
+                    }}
                 >
                     {{ $badge }}
                 </span>

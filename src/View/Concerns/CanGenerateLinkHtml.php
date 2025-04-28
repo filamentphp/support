@@ -10,28 +10,28 @@ use Filament\Support\Enums\Size;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\LinkComponent;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
-use function Filament\Support\get_component_color_classes;
 
 trait CanGenerateLinkHtml
 {
     /**
      * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      *
+     * @param  string | array<string> | null  $badgeColor,
+     * @param  string | array<string> | null  $color,
      * @param  array<string>  $keyBindings
      */
     public function generateLinkHtml(
         ComponentAttributeBag $attributes,
         string | Htmlable | null $badge = null,
-        ?string $badgeColor = 'primary',
+        string | array | null $badgeColor = 'primary',
         Size | string | null $badgeSize = null,
-        ?string $color = null,
+        string | array | null $color = null,
         ?string $form = null,
         ?string $formId = null,
         bool $hasLoadingIndicator = true,
@@ -156,11 +156,10 @@ trait CanGenerateLinkHtml
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-link-badge-ctn">
-                    <span class="<?= Arr::toCssClasses([
+                    <span <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
-                        ...get_component_color_classes(BadgeComponent::class, $badgeColor),
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
-                    ]) ?>">
+                    ])->toHtml() ?>>
                         <?= e($badge) ?>
                     </span>
                 </div>

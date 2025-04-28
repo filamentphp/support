@@ -11,9 +11,9 @@ class IconButtonComponent implements HasColor, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color
-     * @return array<string>
+     * @return array<string, int>
      */
-    public function getColorClasses(array $color): array
+    public function getColorMap(array $color): array
     {
         $gray = FilamentColor::getColor('gray');
 
@@ -68,10 +68,10 @@ class IconButtonComponent implements HasColor, HasDefaultGrayColor
         $darkHoverText ??= 100;
 
         return [
-            "fi-text-color-{$text}",
-            "hover:fi-text-color-{$hoverText}",
-            "dark:fi-text-color-{$darkText}",
-            "dark:hover:fi-text-color-{$darkHoverText}",
+            'text' => $text,
+            'hover:text' => $hoverText,
+            'dark:text' => $darkText,
+            'dark:hover:text' => $darkHoverText,
         ];
     }
 }

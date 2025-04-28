@@ -3,6 +3,7 @@
     use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
@@ -186,10 +187,7 @@
                         @if ($hasIcon)
                             <div class="fi-modal-icon-ctn">
                                 <div
-                                    @class([
-                                        'fi-modal-icon-bg',
-                                        ...\Filament\Support\get_component_color_classes(IconComponent::class, $iconColor),
-                                    ])
+                                    {{ (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
                                 >
                                     {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) }}
                                 </div>
