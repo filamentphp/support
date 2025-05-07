@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Partials;
+namespace Filament\Support\Livewire\Partials;
 
 use Closure;
 use Illuminate\View\View;
@@ -13,7 +13,7 @@ use Livewire\Mechanisms\HandleComponents\ViewContext;
 use function Livewire\store;
 use function Livewire\trigger;
 
-class SupportPartials extends ComponentHook
+class PartialsComponentHook extends ComponentHook
 {
     public function shouldSkipRender(): bool
     {

@@ -1,8 +1,7 @@
 <?php
 
-namespace Filament\Support\Overrides;
+namespace Filament\Support\Livewire\Partials;
 
-use Filament\Support\Partials\SupportPartials;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Mechanisms\DataStore;
@@ -29,7 +28,7 @@ class DataStoreOverride extends DataStore
             return $trueOrPlaceholderHtml;
         }
 
-        $supportPartials = app(SupportPartials::class);
+        $supportPartials = app(PartialsComponentHook::class);
         $supportPartials->setComponent($instance);
 
         return $supportPartials->shouldSkipRender();

@@ -21,8 +21,8 @@ use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Icons\IconManager;
-use Filament\Support\Overrides\DataStoreOverride;
-use Filament\Support\Partials\SupportPartials;
+use Filament\Support\Livewire\Partials\DataStoreOverride;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -134,7 +134,7 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        app('livewire')->componentHook(new SupportPartials);
+        app('livewire')->componentHook(new PartialsComponentHook);
 
         FilamentAsset::register([
             Js::make('support', __DIR__ . '/../dist/index.js'),
@@ -274,6 +274,10 @@ class SupportServiceProvider extends PackageServiceProvider
                 'notifications',
                 'support',
                 'tables',
+                'actions',
+                'infolists',
+                'schemas',
+                'widgets',
             ];
 
             AboutCommand::add('Filament', static fn () => [
