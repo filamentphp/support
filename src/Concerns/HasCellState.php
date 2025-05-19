@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
@@ -102,8 +103,16 @@ trait HasCellState
     public function getStateFromRecord(): mixed
     {
         $record = $this->getRecord();
+        $name = $this->getName();
 
-        $state = data_get($record, $this->getName());
+        if (
+            ($record instanceof HasRichContent) &&
+            $record->hasRichContentAttribute($name)
+        ) {
+            $state = $record->getRichContentAttribute($name);
+        } else {
+            $state = data_get($record, $name);
+        }
 
         if ($state !== null) {
             return $state;

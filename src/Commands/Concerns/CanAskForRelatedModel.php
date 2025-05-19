@@ -5,6 +5,7 @@ namespace Filament\Support\Commands\Concerns;
 use Illuminate\Database\Eloquent\Model;
 
 use function Filament\Support\discover_app_classes;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\suggest;
 
 trait CanAskForRelatedModel
@@ -21,8 +22,10 @@ trait CanAskForRelatedModel
             $modelFqns,
         );
 
+        info("Filament couldn't automatically find the related model for the [{$relationship}] relationship.");
+
         return suggest(
-            label: "Filament couldn't automatically find the related model for the [{$relationship}] relationship. What is the fully qualified class name of the related model?",
+            label: 'What is the related model?',
             options: function (?string $search) use ($modelFqns): array {
                 if (blank($search)) {
                     return $modelFqns;
@@ -33,6 +36,7 @@ trait CanAskForRelatedModel
                 return array_filter($modelFqns, fn (string $modelFqn): bool => str($modelFqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
             placeholder: 'App\\Models\\User',
+            hint: 'Please provide the fully-qualified class name.',
         );
     }
 }

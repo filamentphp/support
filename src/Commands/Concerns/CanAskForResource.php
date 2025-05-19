@@ -70,12 +70,12 @@ trait CanAskForResource
                         ->replace('/', '\\');
 
                     return match (true) {
-                        ! class_exists($value) => 'The resource class does not exist. Please ensure you use the fully qualified class name of the resource, such as [App\\Filament\\Resources\\Posts\\PostResource].',
+                        ! class_exists($value) => 'The resource class doesn\'t exist, please use the fully-qualified class name.',
                         ! is_subclass_of($value, Resource::class) => 'The resource class or one of its parents must extend [' . Resource::class . '].',
                         default => null,
                     };
                 },
-                hint: 'Please provide the fully qualified class name of the resource.',
+                hint: 'Please provide the fully-qualified class name of the resource.',
             ))
                 ->trim('/')
                 ->trim('\\')

@@ -12,18 +12,18 @@ use Filament\Support\Assets\Theme;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array<AlpineComponent> getAlpineComponents(array<string> | null | null $packages = null)
+ * @method static array<AlpineComponent> getAlpineComponents(?array<string> $packages = null)
  * @method static string getAlpineComponentSrc(string $id, string $package = 'app')
- * @method static array<Font> getFonts(array<string> | null $packages = null)
- * @method static array<string, mixed> getScriptData(array<string> | null $packages = null)
+ * @method static array<Font> getFonts(?array<string> $packages = null)
+ * @method static array<string, mixed> getScriptData(?array<string> $packages = null)
  * @method static string getScriptSrc(string $id, string $package = 'app')
- * @method static array<Js> getScripts(array<string> | null $packages = null, bool $withCore = true)
+ * @method static array<Js> getScripts(?array<string> $packages = null, bool $withCore = true)
  * @method static string getStyleHref(string $id, string $package = 'app')
- * @method static array<Css> getStyles(array<string> | null $packages = null)
+ * @method static array<Css> getStyles(?array<string> $packages = null)
  * @method static Theme | null getTheme(string $id)
  * @method static array<string, Theme> getThemes()
- * @method static string renderScripts(array<string> | null $packages = null, bool $withCore = true)
- * @method static string renderStyles(array<string> | null $packages = null)
+ * @method static string renderScripts(?array<string> $packages = null, bool $withCore = true)
+ * @method static string renderStyles(?array<string> $packages = null)
  *
  * @see AssetManager
  */

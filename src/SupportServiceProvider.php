@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use BladeUI\Icons\Factory as BladeIconsFactory;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
 use Filament\Support\Assets\AssetManager;
@@ -130,6 +131,13 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->bind(DataStore::class, DataStoreOverride::class);
+
+        $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
+            $factory->add('filament', [
+                'path' => __DIR__ . '/../resources/svg',
+                'prefix' => 'fi',
+            ]);
+        });
     }
 
     public function packageBooted(): void

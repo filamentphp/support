@@ -74,12 +74,12 @@ trait HasCluster
                     }
 
                     return match (true) {
-                        ! class_exists($value) => 'The cluster class does not exist. Please ensure you use the fully qualified class name of the cluster, such as [App\\Filament\\Clusters\\Blog].',
+                        ! class_exists($value) => 'The cluster class doesn\'t exist, please use the fully-qualified class name.',
                         ! is_subclass_of($value, Cluster::class) => 'The cluster class or one of its parents must extend [' . Cluster::class . '].',
                         default => null,
                     };
                 },
-                hint: 'Please provide the fully qualified class name of the cluster.',
+                hint: 'Please provide the fully-qualified class name of the cluster.',
             ))
                 ->trim('/')
                 ->trim('\\')

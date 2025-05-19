@@ -37,6 +37,7 @@ trait CanAskForSchema
                 return array_filter($schemaFqns, fn (string $schemaFqn): bool => str($schemaFqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
             placeholder: $questionPlaceholder,
+            hint: 'Please provide the fully-qualified class name.',
         );
     }
 }

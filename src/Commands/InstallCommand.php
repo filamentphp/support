@@ -114,7 +114,7 @@ class InstallCommand extends Command
         if (
             InstalledVersions::isInstalled('filament/notifications') &&
             ($this->option('notifications') || confirm(
-                label: 'Would you like to be able to send flash notifications using Filament? If so, we will install the notification Livewire component into the base layout file.',
+                label: 'Do you want to send flash notifications using Filament?',
                 default: true,
             ))
         ) {

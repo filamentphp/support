@@ -3,6 +3,7 @@
 namespace Filament\Support\Commands\Concerns;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\info;
 
 trait CanAskForRelatedResource
 {
@@ -11,8 +12,10 @@ trait CanAskForRelatedResource
      */
     protected function askForRelatedResource(): ?string
     {
+        info('Filament can link this to an existing resource, which will open the resource\'s pages instead of modals when links are clicked. It will also inherit the resource\'s configuration.');
+
         if (! confirm(
-            label: 'Do you want each table row to link to a resource instead of opening a modal? Filament will also inherit the resource\'s configuration.',
+            label: 'Do you want to do this?',
             default: false,
         )) {
             return null;
