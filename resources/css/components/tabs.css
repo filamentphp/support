@@ -8,6 +8,22 @@
     &:not(.fi-contained) {
         @apply mx-auto rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
     }
+
+    &.fi-vertical {
+        @apply flex-col gap-x-0 gap-y-1 overflow-x-hidden overflow-y-auto;
+
+        &.fi-contained {
+            @apply border-e border-b-0;
+        }
+
+        &:not(.fi-contained) {
+            @apply mx-0;
+        }
+
+        & .fi-tabs-item {
+            @apply justify-start;
+        }
+    }
 }
 
 .fi-tabs-item {

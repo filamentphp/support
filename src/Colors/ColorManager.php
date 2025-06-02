@@ -42,6 +42,21 @@ class ColorManager
     protected array $componentCustomStyles = [];
 
     /**
+     * @var array<string,array<int>>
+     */
+    protected array $overridingShades = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $addedShades = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $removedShades = [];
+
+    /**
      * @param  array<string, array<int, string> | string> | Closure  $colors
      */
     public function register(array | Closure $colors): static
@@ -171,5 +186,53 @@ class ColorManager
                 array_keys($map),
             ),
         ];
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function overrideShades(string $alias, array $shades): void
+    {
+        $this->overridingShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getOverridingShades(string $alias): ?array
+    {
+        return $this->overridingShades[$alias] ?? null;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function addShades(string $alias, array $shades): void
+    {
+        $this->addedShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getAddedShades(string $alias): ?array
+    {
+        return $this->addedShades[$alias] ?? null;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function removeShades(string $alias, array $shades): void
+    {
+        $this->removedShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getRemovedShades(string $alias): ?array
+    {
+        return $this->removedShades[$alias] ?? null;
     }
 }

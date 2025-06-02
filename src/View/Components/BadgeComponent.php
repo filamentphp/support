@@ -30,7 +30,7 @@ class BadgeComponent implements HasColor, HasDefaultGrayColor
         krsort($color);
 
         $gray = FilamentColor::getColor('gray');
-        $lightestDarkGrayBg = $gray[500];
+        $lightestDarkGrayBg = $gray[600];
 
         foreach (array_keys($color) as $shade) {
             if ($shade > 500) {

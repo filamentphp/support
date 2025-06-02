@@ -457,6 +457,47 @@ class Color
     /**
      * @return array<int, string>
      */
+    public static function generateV3Palette(string $color): array
+    {
+        $color = str_replace(' ', '', static::convertToRgb($color));
+        [$baseRed, $baseGreen, $baseBlue] = sscanf($color, 'rgb(%d,%d,%d)');
+
+        $colors = [];
+
+        $intensityMap = [
+            50 => 0.95,
+            100 => 0.9,
+            200 => 0.75,
+            300 => 0.6,
+            400 => 0.3,
+            500 => 1.0,
+            600 => 0.9,
+            700 => 0.75,
+            800 => 0.6,
+            900 => 0.49,
+            950 => 0.3,
+        ];
+
+        foreach ($intensityMap as $shade => $intensity) {
+            if ($shade < 500) {
+                $red = ((255 - $baseRed) * $intensity) + $baseRed;
+                $green = ((255 - $baseGreen) * $intensity) + $baseGreen;
+                $blue = ((255 - $baseBlue) * $intensity) + $baseBlue;
+            } else {
+                $red = $baseRed * $intensity;
+                $green = $baseGreen * $intensity;
+                $blue = $baseBlue * $intensity;
+            }
+
+            $colors[$shade] = static::convertToOklch(sprintf('%s, %s, %s', round($red), round($green), round($blue)));
+        }
+
+        return $colors;
+    }
+
+    /**
+     * @return array<int, string>
+     */
     public static function hex(string $color): array
     {
         return static::generatePalette($color);
@@ -477,22 +518,22 @@ class Color
     {
         $color = static::convertToOklch($color);
 
-        [, $chroma, $hue] = sscanf($color, 'oklch(%f %f %f)');
+        [,, $hue] = sscanf($color, 'oklch(%f %f %f)');
 
         return array_map(
-            fn (float $lightness): string => "oklch({$lightness} {$chroma} {$hue})",
+            fn (array $constants): string => "oklch({$constants[0]} {$constants[1]} {$hue})",
             [
-                50 => 0.97717647058824,
-                100 => 0.95035294117647,
-                200 => 0.90547058823529,
-                300 => 0.84047058823529,
-                400 => 0.75352941176471,
-                500 => 0.68270588235294,
-                600 => 0.59782352941176,
-                700 => 0.51494117647059,
-                800 => 0.44611764705882,
-                900 => 0.39458823529412,
-                950 => 0.27788235294118,
+                50 => [0.97717647058824, 0.01395454545455],
+                100 => [0.95035294117647, 0.03272727272727],
+                200 => [0.90547058823529, 0.06318181818182],
+                300 => [0.84047058823529, 0.10604545454546],
+                400 => [0.75352941176471, 0.15027272727273],
+                500 => [0.68270588235294, 0.17009090909091],
+                600 => [0.59782352941176, 0.16913636363636],
+                700 => [0.51494117647059, 0.14940909090909],
+                800 => [0.44611764705882, 0.12331818181818],
+                900 => [0.39458823529412, 0.09963636363636],
+                950 => [0.27788235294118, 0.07136363636364],
             ],
         );
     }

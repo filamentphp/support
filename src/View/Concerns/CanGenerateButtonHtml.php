@@ -103,7 +103,9 @@ trait CanGenerateButtonHtml
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
-            )
+            );
+
+        $buttonAttributes = $attributes
             ->class([
                 'fi-btn',
                 'fi-disabled' => $isDisabled,
@@ -174,7 +176,7 @@ trait CanGenerateButtonHtml
                 x-data="filamentFormButton"
                 x-bind:class="{ 'fi-processing': isProcessing }"
             <?php } ?>
-            <?= $attributes->toHtml() ?>
+            <?= $buttonAttributes->toHtml() ?>
         >
             <?php if ($iconPosition === IconPosition::Before) { ?>
                 <?= $iconHtml ?>

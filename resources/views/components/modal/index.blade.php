@@ -149,7 +149,7 @@
             {{
                 ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
-                    'fi-modal-window-has-close-button' => $closeButton,
+                    'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
                     'fi-modal-window-has-footer' => $hasFooter,
                     'fi-modal-window-has-icon' => $hasIcon,

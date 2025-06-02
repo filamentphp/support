@@ -1,6 +1,7 @@
 @props([
     'contained' => false,
     'label' => null,
+    'vertical' => false,
 ])
 
 <nav
@@ -13,6 +14,7 @@
             ->class([
                 'fi-tabs',
                 'fi-contained' => $contained,
+                'fi-vertical' => $vertical,
             ])
     }}
 >

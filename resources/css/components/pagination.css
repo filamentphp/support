@@ -1,5 +1,4 @@
 .fi-pagination {
-    container-type: inline-size;
     @apply grid grid-cols-[1fr_auto_1fr] items-center gap-x-3;
 
     &:empty {

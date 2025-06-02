@@ -1,3 +1,3 @@
 .fi-dropdown-list {
-    @apply p-1;
+    @apply grid gap-px p-1;
 }

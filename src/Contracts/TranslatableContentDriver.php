@@ -32,5 +32,11 @@ interface TranslatableContentDriver
      */
     public function updateRecord(Model $record, array $data): Model;
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isSearchForcedCaseInsensitive = null): Builder;
 }

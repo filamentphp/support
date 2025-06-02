@@ -282,7 +282,7 @@
             }
         }
 
-        &.fi-modal-window-has-close-button {
+        &.fi-modal-window-has-close-btn {
             &.fi-align-center:not(.fi-modal-window-has-icon) {
                 & .fi-modal-heading {
                     @apply ms-6;

@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.2",
+        "ext-intl": "*",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "danharrin/livewire-rate-limiting": "^2.0",
         "illuminate/contracts": "^11.28|^12.0",

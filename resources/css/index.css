@@ -115,4 +115,16 @@
     --color-warning-800: var(--warning-800);
     --color-warning-900: var(--warning-900);
     --color-warning-950: var(--warning-950);
+
+    --color-custom-50: var(--color-50);
+    --color-custom-100: var(--color-100);
+    --color-custom-200: var(--color-200);
+    --color-custom-300: var(--color-300);
+    --color-custom-400: var(--color-400);
+    --color-custom-500: var(--color-500);
+    --color-custom-600: var(--color-600);
+    --color-custom-700: var(--color-700);
+    --color-custom-800: var(--color-800);
+    --color-custom-900: var(--color-900);
+    --color-custom-950: var(--color-950);
 }
