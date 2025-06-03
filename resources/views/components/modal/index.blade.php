@@ -72,7 +72,7 @@
             this.isOpen = false
 
             this.$refs.modalContainer.dispatchEvent(
-                new CustomEvent('modal-closed', { id: '{{ $id }}' }),
+                new CustomEvent('modal-closed', { detail: { id: '{{ $id }}' } }),
             )
         },
 
@@ -85,7 +85,7 @@
                 @endif
 
                 this.$refs.modalContainer.dispatchEvent(
-                    new CustomEvent('modal-opened', { id: '{{ $id }}' }),
+                    new CustomEvent('modal-opened', { detail: { id: '{{ $id }}' } }),
                 )
             })
         },
