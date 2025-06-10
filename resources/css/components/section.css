@@ -137,10 +137,6 @@
         & .fi-section-collapse-btn {
             @apply rotate-180;
         }
-
-        & .fi-section-content-ctn {
-            @apply invisible absolute h-0 overflow-hidden border-none;
-        }
     }
 
     &.fi-section-has-content-before {
@@ -152,7 +148,7 @@
     & .fi-section-header {
         @apply flex items-center gap-3;
 
-        & .fi-icon {
+        & > .fi-icon {
             @apply self-start text-gray-400 dark:text-gray-500;
 
             &.fi-color {

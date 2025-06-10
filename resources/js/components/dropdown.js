@@ -1,13 +1,13 @@
 export default () => ({
-    toggle: function (event) {
+    toggle(event) {
         this.$refs.panel.toggle(event)
     },
 
-    open: function (event) {
+    open(event) {
         this.$refs.panel.open(event)
     },
 
-    close: function (event) {
+    close(event) {
         this.$refs.panel.close(event)
     },
 })

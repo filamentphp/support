@@ -5,7 +5,7 @@ export default ({ id }) => ({
 
     livewire: null,
 
-    init: function () {
+    init() {
         this.$nextTick(() => {
             this.isWindowVisible = this.isOpen
 
@@ -13,17 +13,17 @@ export default ({ id }) => ({
         })
     },
 
-    close: function () {
+    close() {
         this.closeQuietly()
 
         this.$dispatch('modal-closed', { id })
     },
 
-    closeQuietly: function () {
+    closeQuietly() {
         this.isOpen = false
     },
 
-    open: function () {
+    open() {
         this.$nextTick(() => {
             this.isOpen = true
 

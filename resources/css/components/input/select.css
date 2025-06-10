@@ -6,6 +6,10 @@
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
 
+    :dir(rtl) & {
+        background-position: left 0.5rem center;
+    }
+
     &.fi-select-input-has-inline-prefix {
         @apply ps-0;
     }

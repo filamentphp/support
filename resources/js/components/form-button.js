@@ -5,7 +5,7 @@ export default () => ({
 
     processingMessage: null,
 
-    init: function () {
+    init() {
         const formElement = this.$el.closest('form')
 
         formElement?.addEventListener('form-processing-started', (event) => {

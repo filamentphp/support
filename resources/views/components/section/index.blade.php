@@ -97,7 +97,7 @@
             @if ($collapsible)
                 <x-filament::icon-button
                     color="gray"
-                    :icon="\Filament\Support\Icons\Heroicon::ChevronDown"
+                    :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     icon-alias="section.collapse-button"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     class="fi-section-collapse-btn"
@@ -117,10 +117,22 @@
     >
         @if ($hasContentEl)
             <div class="fi-section-content">
-                {{ $slot }}
+                @if ($collapsible)
+                    <template x-if="! isCollapsed">
+                        {{ $slot }}
+                    </template>
+                @else
+                    {{ $slot }}
+                @endif
             </div>
         @else
-            {{ $slot }}
+            @if ($collapsible)
+                <template x-if="! isCollapsed">
+                    {{ $slot }}
+                </template>
+            @else
+                {{ $slot }}
+            @endif
         @endif
 
         @if (! is_slot_empty($footer))
