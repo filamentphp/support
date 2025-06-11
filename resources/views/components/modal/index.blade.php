@@ -50,8 +50,8 @@
         $footerActionsAlignment = filled($footerActionsAlignment) ? (Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment) : null;
     }
 
-    if (! $width instanceof Width) {
-        $width = filled($width) ? (Width::tryFrom($width) ?? $width) : null;
+    if (is_string($width)) {
+        $width = Width::tryFrom($width) ?? $width;
     }
 
     $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
