@@ -146,6 +146,9 @@
             @if (filled($wireSubmitHandler))
                 wire:submit.prevent="{!! $wireSubmitHandler !!}"
             @endif
+            @if (filled($id))
+                wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
+            @endif
             {{
                 ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
@@ -162,6 +165,9 @@
         >
             @if ($heading || $header)
                 <div
+                    @if (filled($id))
+                        wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.header"
+                    @endif
                     @class([
                         'fi-modal-header',
                         'fi-sticky' => $stickyHeader,
@@ -210,13 +216,21 @@
             @endif
 
             @if ($hasContent)
-                <div class="fi-modal-content">
+                <div
+                    @if (filled($id))
+                        wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.content"
+                    @endif
+                    class="fi-modal-content"
+                >
                     {{ $slot }}
                 </div>
             @endif
 
             @if ($hasFooter)
                 <div
+                    @if (filled($id))
+                        wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.footer"
+                    @endif
                     @class([
                         'fi-modal-footer',
                         'fi-sticky' => $stickyFooter,
