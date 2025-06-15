@@ -92,7 +92,11 @@
                 </div>
             @endif
 
-            {{ $afterHeader }}
+            @if (! is_slot_empty($afterHeader))
+                <div x-on:click.stop class="fi-section-header-after-ctn">
+                    {{ $afterHeader }}
+                </div>
+            @endif
 
             @if ($collapsible)
                 <x-filament::icon-button
@@ -117,22 +121,10 @@
     >
         @if ($hasContentEl)
             <div class="fi-section-content">
-                @if ($collapsible)
-                    <template x-if="! isCollapsed">
-                        {{ $slot }}
-                    </template>
-                @else
-                    {{ $slot }}
-                @endif
+                {{ $slot }}
             </div>
         @else
-            @if ($collapsible)
-                <template x-if="! isCollapsed">
-                    {{ $slot }}
-                </template>
-            @else
-                {{ $slot }}
-            @endif
+            {{ $slot }}
         @endif
 
         @if (! is_slot_empty($footer))
