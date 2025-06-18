@@ -118,6 +118,10 @@ trait HasCellState
             return $state;
         }
 
+        if (($this instanceof Column) && is_array($record)) { /** @phpstan-ignore function.impossibleType, booleanAnd.alwaysFalse */
+            return null;
+        }
+
         if (! $this->hasRelationship($record)) {
             return null;
         }

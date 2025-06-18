@@ -106,9 +106,9 @@ class PartialsComponentHook extends ComponentHook
 
                 $viewContext = app(ViewContext::class);
 
-                $html = $view->render(function (View $view) use ($viewContext): void {
+                $html = ($view instanceof View) ? $view->render(function (View $view) use ($viewContext): void {
                     $viewContext->extractFromEnvironment($view->getFactory());
-                });
+                }) : $view;
 
                 $revertSharingComponentWithViews();
 
