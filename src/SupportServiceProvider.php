@@ -205,7 +205,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 ));
         });
 
-        ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], bool $isHidden = false): ComponentAttributeBag {
+        ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], array | int | string | null $order = [], bool $isHidden = false): ComponentAttributeBag {
             if (! is_array($span)) {
                 $span = ['default' => $span];
             }
@@ -214,9 +214,15 @@ class SupportServiceProvider extends PackageServiceProvider
                 $start = ['default' => $start];
             }
 
+            if (! is_array($order)) {
+                $order = ['default' => $order];
+            }
+
             $span = array_filter($span);
 
             $start = array_filter($start);
+
+            $order = array_filter($order);
 
             return $this
                 ->class([
@@ -236,6 +242,13 @@ class SupportServiceProvider extends PackageServiceProvider
                         },
                         array_keys($start),
                     ),
+                    ...array_map(
+                        fn (string $breakpoint): string => match ($breakpoint) {
+                            'default' => 'fi-grid-col-order',
+                            default => "{$breakpoint}:fi-grid-col-order",
+                        },
+                        array_keys($order),
+                    ),
                 ])
                 ->style([
                     ...array_map(
@@ -250,6 +263,11 @@ class SupportServiceProvider extends PackageServiceProvider
                         fn (string $breakpoint, int $start): string => '--col-start-' . str_replace('!', 'n', str_replace('@', 'c', $breakpoint)) . ': ' . $start,
                         array_keys($start),
                         array_values($start),
+                    ),
+                    ...array_map(
+                        fn (string $breakpoint, int $order): string => '--col-order-' . str_replace('!', 'n', str_replace('@', 'c', $breakpoint)) . ': ' . $order,
+                        array_keys($order),
+                        array_values($order),
                     ),
                 ]);
         });

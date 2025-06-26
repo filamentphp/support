@@ -7,12 +7,12 @@ use Closure;
 trait CanSpanColumns
 {
     /**
-     * @var array<string| int, int | string | Closure | null> | null
+     * @var array<string | int, int | string | Closure | null> | null
      */
     protected ?array $columnSpan = null;
 
     /**
-     * @var array<string| int, int | string | Closure | null> | null
+     * @var array<string | int, int | string | Closure | null> | null
      */
     protected ?array $columnStart = null;
 
@@ -74,7 +74,7 @@ trait CanSpanColumns
     }
 
     /**
-     * @return array<string, int | string | Closure | null> | int | string | null
+     * @return array<string, int | string | null> | int | string | null
      */
     public function getColumnSpan(int | string | null $breakpoint = null): array | int | string | null
     {
@@ -126,7 +126,7 @@ trait CanSpanColumns
     }
 
     /**
-     * @return array<string, int | string | Closure | null> | int | string | null
+     * @return array<string, int | string | null> | int | string | null
      */
     public function getColumnStart(int | string | null $breakpoint = null): array | int | string | null
     {

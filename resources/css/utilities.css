@@ -714,9 +714,9 @@
 
     hr:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-color: var(--prose-hr-color);
-        margin-block: --spacing(16);
+        margin-block: --spacing(8);
         & + h2 {
-            margin-top: --spacing(16);
+            margin-top: --spacing(8);
         }
     }
 
@@ -752,5 +752,9 @@
 
     :last-child:where(:not(.fi-not-prose, .fi-not-prose *)) {
         margin-bottom: 0;
+    }
+
+    & .lead:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        font-size: var(--text-base);
     }
 }

@@ -405,6 +405,106 @@
         }
     }
 
+    &.fi-grid-col-order {
+        @apply order-(--col-order-default);
+    }
+
+    &.sm\:fi-grid-col-order {
+        @apply sm:order-(--col-order-sm);
+    }
+
+    &.md\:fi-grid-col-order {
+        @apply md:order-(--col-order-md);
+    }
+
+    &.lg\:fi-grid-col-order {
+        @apply lg:order-(--col-order-lg);
+    }
+
+    &.xl\:fi-grid-col-order {
+        @apply xl:order-(--col-order-xl);
+    }
+
+    &.\32xl\:fi-grid-col-order {
+        @apply 2xl:order-(--col-order-2xl);
+    }
+
+    @supports (container-type: inline-size) {
+        &.\@3xs\:fi-grid-col-order {
+            @apply @3xs:order-(--col-order-c3xs);
+        }
+
+        &.\@2xs\:fi-grid-col-order {
+            @apply @2xs:order-(--col-order-c2xs);
+        }
+
+        &.\@xs\:fi-grid-col-order {
+            @apply @xs:order-(--col-order-cxs);
+        }
+
+        &.\@sm\:fi-grid-col-order {
+            @apply @sm:order-(--col-order-csm);
+        }
+
+        &.\@md\:fi-grid-col-order {
+            @apply @md:order-(--col-order-cmd);
+        }
+
+        &.\@lg\:fi-grid-col-order {
+            @apply @lg:order-(--col-order-clg);
+        }
+
+        &.\@xl\:fi-grid-col-order {
+            @apply @xl:order-(--col-order-cxl);
+        }
+
+        &.\@2xl\:fi-grid-col-order {
+            @apply @2xl:order-(--col-order-c2xl);
+        }
+
+        &.\@3xl\:fi-grid-col-order {
+            @apply @3xl:order-(--col-order-c3xl);
+        }
+
+        &.\@4xl\:fi-grid-col-order {
+            @apply @4xl:order-(--col-order-c4xl);
+        }
+
+        &.\@5xl\:fi-grid-col-order {
+            @apply @5xl:order-(--col-order-c5xl);
+        }
+
+        &.\@6xl\:fi-grid-col-order {
+            @apply @6xl:order-(--col-order-c6xl);
+        }
+
+        &.\@7xl\:fi-grid-col-order {
+            @apply @7xl:order-(--col-order-c7xl);
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        &.\!\@sm\:fi-grid-col-order {
+            @apply sm:order-(--col-order-ncsm);
+        }
+
+        &.\!\@md\:fi-grid-col-order {
+            @apply md:order-(--col-order-ncmd);
+        }
+
+        &.\!\@lg\:fi-grid-col-order {
+            @apply lg:order-(--col-order-nclg);
+        }
+
+        &.\!\@xl\:fi-grid-col-order {
+            @apply xl:order-(--col-order-ncxl);
+        }
+
+        &.\!\@2xl\:fi-grid-col-order {
+            @apply 2xl:order-(--col-order-nc2xl);
+        }
+    }
+
     &.fi-hidden {
         @apply hidden;
     }
