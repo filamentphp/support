@@ -8,8 +8,10 @@ use Filament\Support\Assets\Theme;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static void appVersion(?string $version)
  * @method static array getAlpineComponents(array | null $packages = null)
  * @method static string getAlpineComponentSrc(string $id, string $package = 'app')
+ * @method static ?string getAppVersion()
  * @method static array getScriptData(array | null $packages = null)
  * @method static string getScriptSrc(string $id, string $package = 'app')
  * @method static array getScripts(array | null $packages = null, bool $withCore = true)
