@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentView;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp

@@ -233,7 +233,14 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         }
 
         $column = match ($driverName) {
-            'pgsql' => "{$column}::text",
+            'pgsql' => (str($column)->contains('->')
+                    ? str($column)
+                        ->beforeLast('->')
+                        ->append('->>')
+                        ->append("'")
+                        ->append(str($column)->afterLast('->'))
+                        ->append("'")
+                    : $column) . '::text',
             default => $column,
         };
 
