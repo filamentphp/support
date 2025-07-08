@@ -225,22 +225,25 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
-        if (Str::lower($column) !== $column) {
-            $column = match ($driverName) {
-                'pgsql' => (string) str($column)->wrap('"'),
-                default => $column,
-            };
-        }
-
         $column = match ($driverName) {
-            'pgsql' => (str($column)->contains('->')
-                    ? str($column)
-                        ->beforeLast('->')
+            'pgsql' => (
+                str($column)->contains('->')
+                    ? str(
+                        str($column)
+                            ->beforeLast('->')
+                            ->explode('.')
+                            ->map(fn (string $part) => str($part)->wrap('"'))
+                            ->implode('.')
+                    )
                         ->append('->>')
                         ->append("'")
                         ->append(str($column)->afterLast('->'))
                         ->append("'")
-                    : $column) . '::text',
+                    : str($column)
+                        ->explode('.')
+                        ->map(fn (string $part) => str($part)->wrap('"'))
+                        ->implode('.')
+            ) . '::text',
             default => $column,
         };
 
