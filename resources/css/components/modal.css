@@ -23,6 +23,14 @@
             &.fi-transition-leave-start {
                 @apply translate-x-0;
             }
+
+            & .fi-modal-header {
+                @apply gap-x-3;
+            }
+
+            & .fi-modal-icon-bg {
+                @apply -my-2 -ms-2 p-2;
+            }
         }
 
         & .fi-modal-close-btn {

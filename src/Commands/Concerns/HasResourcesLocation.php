@@ -49,6 +49,13 @@ trait HasResourcesLocation
             ];
         }
 
+        if ($this->option('resource-namespace')) {
+            return [
+                (string) $this->option('resource-namespace'),
+                $directories[array_search($this->option('resource-namespace'), $namespaces)],
+            ];
+        }
+
         $keyedNamespaces = array_combine(
             $namespaces,
             $namespaces,
