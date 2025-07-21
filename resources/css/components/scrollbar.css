@@ -1,0 +1,28 @@
+.os-theme-filament {
+    @apply box-border;
+    --os-size: 10px;
+    --os-padding-perpendicular: 2px;
+    --os-padding-axis: 2px;
+    --os-track-border-radius: 10px;
+    --os-handle-border-radius: 10px;
+    --os-handle-bg: theme('colors.gray.400 / 50%');
+    --os-handle-bg-hover: theme('colors.gray.500 / 50%');
+    --os-handle-bg-active: theme('colors.gray.600 / 50%');
+    --os-handle-interactive-area-offset: 4px;
+
+    @variant dark {
+        --os-handle-bg: theme('colors.gray.500 / 30%');
+        --os-handle-bg-hover: theme('colors.gray.400 / 40%');
+        --os-handle-bg-active: theme('colors.gray.300 / 50%');
+    }
+}
+
+/* Hide native scrollbars for elements that use OverlayScrollbars */
+
+[data-overlayscrollbars-initialize] {
+    scrollbar-width: none; /* Firefox */
+}
+
+[data-overlayscrollbars-initialize]::-webkit-scrollbar {
+    @apply hidden; /* Chrome, Safari, Edge */
+}

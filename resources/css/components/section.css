@@ -134,7 +134,7 @@
     }
 
     &.fi-collapsed {
-        & > .fi-section-collapse-btn {
+        & > .fi-section-header > .fi-section-collapse-btn {
             @apply rotate-180;
         }
 

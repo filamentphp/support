@@ -26,6 +26,7 @@
 @import './components/loading-section.css' layer(components);
 @import './components/modal.css' layer(components);
 @import './components/pagination.css' layer(components);
+@import './components/scrollbar.css' layer(components);
 @import './components/section.css' layer(components);
 @import './components/tabs.css' layer(components);
 @import './components/toggle.css' layer(components);

@@ -9,7 +9,9 @@ import formButton from './components/form-button.js'
 import modal from './components/modal.js'
 import './partials.js'
 import pluralize from './utilities/pluralize.js'
+import './scrollbars.js'
 
+import 'overlayscrollbars/overlayscrollbars.css'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 
