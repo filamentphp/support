@@ -130,7 +130,7 @@ trait EvaluatesClosures
 
         $class = $parameter->getDeclaringClass();
 
-        if (blank($class)) {
+        if (is_null($class)) {
             return $name;
         }
 
