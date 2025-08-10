@@ -145,6 +145,7 @@
 
     & .fi-modal-window {
         @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        contain: layout;
 
         &.fi-align-start,
         &.fi-align-left {
