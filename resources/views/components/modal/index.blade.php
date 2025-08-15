@@ -157,7 +157,7 @@
                     'fi-modal-window-has-icon' => $hasIcon,
                     'fi-modal-window-has-sticky-header' => $stickyHeader,
                     'fi-hidden' => ! $visible,
-                    (($alignment instanceof Alignment) && (! $slideOver)) ? "fi-align-{$alignment->value}" : null,
+                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
                 ])
             }}
