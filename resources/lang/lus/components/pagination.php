@@ -4,13 +4,13 @@ return [
 
     'label' => 'Pagination navigation',
 
-    'overview' => '{1} Result 1 tihlan|[2,*] Result :first atang :last tihlan, :total atangin',
+    'overview' => '{1} Result 1 tihlan|[2,*] Result :first atang :last lanna, :total atangin',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'Per page',
+            'label' => 'Page tinah',
 
             'options' => [
                 'all' => 'All',
