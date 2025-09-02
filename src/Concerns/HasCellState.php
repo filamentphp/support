@@ -410,4 +410,9 @@ trait HasCellState
 
         return $this->cachedState[$recordKey] = $state();
     }
+
+    public function getGetStateUsingCallback(): mixed
+    {
+        return $this->getStateUsing;
+    }
 }

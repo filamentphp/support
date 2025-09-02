@@ -600,7 +600,7 @@ export class Select {
                 }
 
                 // If not found, add to missing values
-                missingValues.push(value)
+                missingValues.push(value.toString())
             }
         }
 
