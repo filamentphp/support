@@ -207,15 +207,15 @@ class SupportServiceProvider extends PackageServiceProvider
 
         ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], array | int | string | null $order = [], bool $isHidden = false): ComponentAttributeBag {
             if (! is_array($span)) {
-                $span = ['default' => $span];
+                $span = ['lg' => $span];
             }
 
             if (! is_array($start)) {
-                $start = ['default' => $start];
+                $start = ['lg' => $start];
             }
 
             if (! is_array($order)) {
-                $order = ['default' => $order];
+                $order = ['lg' => $order];
             }
 
             $span = array_filter($span);
