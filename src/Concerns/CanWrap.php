@@ -24,9 +24,4 @@ trait CanWrap
     {
         return false;
     }
-
-    public function hasWrap(): bool
-    {
-        return $this->canWrap !== null || $this->canWrapByDefault();
-    }
 }

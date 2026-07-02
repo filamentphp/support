@@ -69,9 +69,4 @@ trait CanBeCopied
             'state' => $state,
         ]) ?? 2000;
     }
-
-    public function hasCopyable(): bool
-    {
-        return $this->isCopyable !== false;
-    }
 }

@@ -2,8 +2,8 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
@@ -16,6 +16,7 @@
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
+    'focusTrapReturnsFocus' => true,
     'extraModalWindowAttributeBag' => null,
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
@@ -43,7 +44,8 @@
     $hasDescription = filled($description);
     $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
     $hasHeading = filled($heading);
-    $hasIcon = filled($icon);
+    $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) : null;
+    $hasIcon = $iconHtml !== null;
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -113,7 +115,7 @@
     }"
     x-cloak
     x-show="isOpen"
-    x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
+    x-trap.noscroll{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
     {{
         $attributes->class([
             'fi-modal',
@@ -132,7 +134,7 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         {{
-            ($extraModalOverlayAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+            ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                 'fi-modal-close-overlay',
             ])
         }}
@@ -167,7 +169,7 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+                ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
                     'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
@@ -208,9 +210,9 @@
                         @if ($hasIcon)
                             <div class="fi-modal-icon-ctn">
                                 <div
-                                    {{ (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
+                                    {{ (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
                                 >
-                                    {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) }}
+                                    {{ $iconHtml }}
                                 </div>
                             </div>
                         @endif

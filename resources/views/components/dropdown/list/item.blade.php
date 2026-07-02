@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\Size;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\DropdownComponent\ItemComponent;
     use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
@@ -47,10 +46,6 @@
 
     $hasDeferredBadge = filled($alpineDeferredBadgeData);
     $hasTooltip = filled($tooltip);
-
-    $loadingDelay = ($icon || $hasLoadingIndicator)
-        ? config('filament.livewire_loading_delay', 'default')
-        : null;
 @endphp
 
 {!! ($tag === 'form') ? ('<form ' . $attributes->only(['action', 'class', 'method', 'wire:submit'])->toHtml() . '>') : '' !!}
@@ -104,10 +99,10 @@
             ->color(ItemComponent::class, $color)
     }}
 >
-    @if ($icon)
+    @if ($icon || $iconAlias)
         {{
-            \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+            \Filament\Support\generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
@@ -118,7 +113,7 @@
             class="fi-dropdown-list-item-image"
             style="background-image: url('{{ $image }}')"
             @if ($hasLoadingIndicator)
-                wire:loading.remove.delay.{{ $loadingDelay }}
+                wire:loading.remove.delay.{{ config('filament.livewire_loading_delay', 'default') }}
                 wire:target="{{ $loadingIndicatorTarget }}"
             @endif
         ></div>
@@ -126,8 +121,8 @@
 
     @if ($hasLoadingIndicator)
         {{
-            \Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
+            \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
+                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => $loadingIndicatorTarget,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
@@ -149,7 +144,7 @@
                         allowHTML: @js($badgeTooltip instanceof \Illuminate\Contracts\Support\Htmlable),
                     }"
                 @endif
-                {{ (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
+                {{ (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
             >
                 {{ $badge }}
             </span>

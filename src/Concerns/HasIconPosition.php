@@ -30,9 +30,4 @@ trait HasIconPosition
 
         return IconPosition::tryFrom($position) ?? IconPosition::Before;
     }
-
-    public function hasIconPosition(): bool
-    {
-        return $this->iconPosition !== null;
-    }
 }

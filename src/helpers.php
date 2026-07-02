@@ -9,7 +9,6 @@ use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -175,7 +174,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
 
         $size ??= IconSize::Medium;
 
-        $attributes = ($attributes ?? new FilamentComponentAttributeBag)->class([
+        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
             'fi-icon',
             "fi-size-{$size->value}",
         ]);
@@ -211,7 +210,7 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
     {
         $size ??= IconSize::Medium;
 
-        $attributes = ($attributes ?? new FilamentComponentAttributeBag)->class([
+        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
             'fi-icon fi-loading-indicator',
             "fi-size-{$size->value}",
         ]);

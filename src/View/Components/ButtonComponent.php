@@ -11,19 +11,9 @@ use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
 class ButtonComponent implements HasColor, HasDefaultGrayColor
 {
-    /**
-     * @var array<int, static>
-     */
-    protected static array $cachedInstances = [];
-
     public function __construct(
         public readonly bool $isOutlined = false,
     ) {}
-
-    public static function make(bool $isOutlined = false): static
-    {
-        return static::$cachedInstances[$isOutlined] ??= app(static::class, ['isOutlined' => $isOutlined]);
-    }
 
     /**
      * @param  array<int, string>  $color

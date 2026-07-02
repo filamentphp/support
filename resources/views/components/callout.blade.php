@@ -42,7 +42,7 @@
         {{
             generate_icon_html(
                 $icon,
-                attributes: (new \Filament\Support\View\ComponentAttributeBag)
+                attributes: (new \Illuminate\View\ComponentAttributeBag)
                     ->color(IconComponent::class, $iconColor)
                     ->class(['fi-callout-icon']),
                 size: $iconSize ?? IconSize::Large,
