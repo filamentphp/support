@@ -3,7 +3,6 @@
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\Size;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\LinkComponent;
     use Illuminate\View\ComponentAttributeBag;
@@ -69,10 +68,6 @@
     }
 
     $hasTooltip = filled($tooltip);
-
-    $loadingDelay = ($icon || $hasLoadingIndicator)
-        ? config('filament.livewire_loading_delay', 'default')
-        : null;
 @endphp
 
 <{{ $tag }}
@@ -116,10 +111,10 @@
     }}
 >
     @if ($iconPosition === IconPosition::Before)
-        @if ($icon)
+        @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
             }}
@@ -127,8 +122,8 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
             }}
@@ -140,10 +135,10 @@
     @endif
 
     @if ($iconPosition === IconPosition::After)
-        @if ($icon)
+        @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
             }}
@@ -151,8 +146,8 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . $loadingDelay => '',
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
             }}
@@ -166,7 +161,7 @@
             @else
                 <span
                     {{
-                        (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                        (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                             'fi-badge',
                             ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
                         ])

@@ -4,11 +4,11 @@ namespace Filament\Support\Components;
 
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
+use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 abstract class ViewComponent extends Component implements Htmlable
@@ -27,17 +27,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
     protected string $viewIdentifier;
 
-    /**
-     * @var array<view-string, View>
-     */
-    protected array $viewInstances = [];
-
-    protected ?string $publishedViewOverrideCheckPath = null;
-
-    /**
-     * @var array<string, bool>
-     */
-    private static array $hasPublishedEmbeddedViewOverrideCache = [];
+    protected View $viewInstance;
 
     /**
      * @param  view-string | null  $view
@@ -128,38 +118,11 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function toHtml(): string
     {
-        if ((! ($this instanceof HasEmbeddedView)) || $this->hasView()) {
-            return $this->render()->render();
+        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            return $this->toEmbeddedHtml();
         }
 
-        $publishedViewOverrideCheckPath = $this->getPublishedViewOverrideCheckPath();
-
-        if (filled($publishedViewOverrideCheckPath) && static::hasPublishedEmbeddedViewOverride($publishedViewOverrideCheckPath)) {
-            return $this->renderView($publishedViewOverrideCheckPath)->render();
-        }
-
-        return $this->toEmbeddedHtml();
-    }
-
-    public function getPublishedViewOverrideCheckPath(): ?string
-    {
-        return $this->publishedViewOverrideCheckPath;
-    }
-
-    public static function hasPublishedEmbeddedViewOverride(string $view): bool
-    {
-        return self::$hasPublishedEmbeddedViewOverrideCache[$view] ??= self::checkForPublishedEmbeddedViewOverride($view);
-    }
-
-    protected static function checkForPublishedEmbeddedViewOverride(string $view): bool
-    {
-        if (! str_contains($view, '::')) {
-            return false;
-        }
-
-        [$namespace, $name] = explode('::', $view, 2);
-
-        return file_exists(resource_path('views/vendor/' . $namespace . '/' . str_replace('.', '/', $name) . '.blade.php'));
+        return $this->render()->render();
     }
 
     public function toHtmlString(): ?HtmlString
@@ -183,21 +146,13 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function render(): View
     {
-        return $this->renderView($this->getView());
-    }
-
-    /**
-     * @param  view-string  $view
-     */
-    protected function renderView(string $view): View
-    {
-        $this->viewInstances[$view] ??= view($view, [
+        $this->viewInstance ??= view($this->getView(), [
             ...$this->extractPublicMethods(),
             ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
         ]);
 
-        return $this->viewInstances[$view]->with([
-            'attributes' => new FilamentComponentAttributeBag,
+        return $this->viewInstance->with([
+            'attributes' => new ComponentAttributeBag,
             ...$this->getExtraViewData(),
             ...$this->getViewData(),
         ]);

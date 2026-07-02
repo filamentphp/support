@@ -115,16 +115,16 @@ class ColorManager
             return [];
         }
 
-        $componentKey = is_string($component) ? $component : serialize($component);
-
-        if (isset($this->componentClasses[$componentKey][$color])) {
-            return $this->componentClasses[$componentKey][$color];
-        }
-
         $component = is_string($component) ? app($component) : $component;
 
         if (($color === 'gray') && ($component instanceof HasDefaultGrayColor)) {
-            return $this->componentClasses[$componentKey][$color] = [];
+            return [];
+        }
+
+        $componentKey = serialize($component);
+
+        if ($this->componentClasses[$componentKey][$color] ?? []) {
+            return $this->componentClasses[$componentKey][$color];
         }
 
         $classes = ['fi-color', "fi-color-{$color}"];
@@ -164,14 +164,13 @@ class ColorManager
      */
     public function getComponentCustomStyles(string | HasColor $component, array $color): array
     {
-        $componentKey = is_string($component) ? $component : serialize($component);
+        $component = is_string($component) ? app($component) : $component;
+        $componentKey = serialize($component);
         $colorKey = serialize($color);
 
-        if (isset($this->componentCustomStyles[$componentKey][$colorKey])) {
+        if ($this->componentCustomStyles[$componentKey][$colorKey] ?? []) {
             return $this->componentCustomStyles[$componentKey][$colorKey];
         }
-
-        $component = is_string($component) ? app($component) : $component;
 
         $map = $component->getColorMap($color);
 

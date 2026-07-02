@@ -4,7 +4,6 @@ namespace Filament\Support\View\Concerns;
 
 use BackedEnum;
 use Filament\Support\Enums\IconSize;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
@@ -94,10 +93,6 @@ trait CanGenerateDropdownItemHtml
             ])
             ->color(ItemComponent::class, $color);
 
-        $loadingDelay = ($icon || $hasLoadingIndicator)
-            ? config('filament.livewire_loading_delay', 'default')
-            : null;
-
         ob_start(); ?>
 
         <?= ($tag === 'form') ? ('<form ' . $formAttributes->toHtml() . '>' . csrf_field()) : '' ?>
@@ -119,12 +114,12 @@ trait CanGenerateDropdownItemHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)->toHtml() : '' ?>
-            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . $loadingDelay => '',
+            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
+                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => $loadingIndicatorTarget,
             ])), size: $iconSize)->toHtml() : '' ?>
 
@@ -141,7 +136,7 @@ trait CanGenerateDropdownItemHtml
                             allowHTML: <?= Js::from($badgeTooltip instanceof Htmlable) ?>,
                         }"
                     <?php } ?>
-                    <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge'])->toHtml() ?>
+                    <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge'])->toHtml() ?>
                 >
                     <?= e($badge) ?>
                 </span>

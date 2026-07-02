@@ -19,9 +19,4 @@ trait HasLineClamp
     {
         return $this->evaluate($this->lineClamp);
     }
-
-    public function hasLineClamp(): bool
-    {
-        return $this->lineClamp !== null;
-    }
 }

@@ -6,7 +6,6 @@ use BackedEnum;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
@@ -101,17 +100,13 @@ trait CanGenerateBadgeHtml
             ])
             ->color(BadgeComponent::class, $color);
 
-        $loadingDelay = ($icon || $hasLoadingIndicator)
-            ? config('filament.livewire_loading_delay', 'default')
-            : null;
-
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize ?? IconSize::Small)->toHtml() : '';
 
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-            'wire:loading.delay.' . $loadingDelay => '',
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
+            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
             'wire:target' => $loadingIndicatorTarget,
         ])), size: $iconSize ?? IconSize::Small)->toHtml() : '';
 

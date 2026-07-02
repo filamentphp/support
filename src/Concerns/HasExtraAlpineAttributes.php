@@ -3,7 +3,6 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraAlpineAttributes
@@ -35,7 +34,7 @@ trait HasExtraAlpineAttributes
      */
     public function getExtraAlpineAttributes(): array
     {
-        $temporaryAttributeBag = new FilamentComponentAttributeBag;
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraAlpineAttributes as $extraAlpineAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAlpineAttributes), escape: false);
@@ -46,6 +45,6 @@ trait HasExtraAlpineAttributes
 
     public function getExtraAlpineAttributeBag(): ComponentAttributeBag
     {
-        return new FilamentComponentAttributeBag($this->getExtraAlpineAttributes());
+        return new ComponentAttributeBag($this->getExtraAlpineAttributes());
     }
 }

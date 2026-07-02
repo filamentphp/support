@@ -64,9 +64,4 @@ trait HasBadge
             'badge' => $badge,
         ]);
     }
-
-    public function hasBadge(): bool
-    {
-        return $this->badge !== null;
-    }
 }

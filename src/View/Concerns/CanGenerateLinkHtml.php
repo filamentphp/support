@@ -7,7 +7,6 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\LinkComponent;
 use Illuminate\Contracts\Support\Htmlable;
@@ -123,17 +122,13 @@ trait CanGenerateLinkHtml
             ])
             ->color(LinkComponent::class, $color);
 
-        $loadingDelay = ($icon || $hasLoadingIndicator)
-            ? config('filament.livewire_loading_delay', 'default')
-            : null;
-
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize)->toHtml() : '';
 
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-            'wire:loading.delay.' . $loadingDelay => '',
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
+            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
             'wire:target' => $loadingIndicatorTarget,
         ])), size: $iconSize)->toHtml() : '';
 
@@ -174,7 +169,7 @@ trait CanGenerateLinkHtml
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-link-badge-ctn">
-                    <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                    <span <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>

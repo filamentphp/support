@@ -6,7 +6,7 @@
 
 <div
     {{
-        ($attributes ?? new \Filament\Support\View\ComponentAttributeBag)
+        ($attributes ?? new \Illuminate\View\ComponentAttributeBag)
             ->gridColumn($columnSpan, $columnStart)
             ->class(['fi-section fi-loading-section'])
             ->style(['height: ' . e($height ?? '8rem')])
