@@ -4,9 +4,11 @@
     use Filament\Support\Enums\Width;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Illuminate\Contracts\Support\Htmlable;
 @endphp
 
 @props([
+    'alert' => false,
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
@@ -47,6 +49,12 @@
     $hasHeading = filled($heading);
     $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) : null;
     $hasIcon = $iconHtml !== null;
+
+    $headingId = filled($id) ? "{$id}.heading" : null;
+
+    // The description is only rendered when the built-in heading is, so the
+    // `aria-describedby` reference must be gated to the same conditions.
+    $descriptionId = ($hasDescription && $hasHeading && (! $header) && filled($id)) ? "{$id}.description" : null;
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -98,14 +106,20 @@
 @endif
 
 <div
+    @if ($descriptionId)
+        aria-describedby="{{ $descriptionId }}"
+    @endif
     @if ($ariaLabelledby)
         aria-labelledby="{{ $ariaLabelledby }}"
-    @elseif ($heading)
-        aria-labelledby="{{ "{$id}.heading" }}"
+    @elseif ($hasHeading && $headingId)
+        aria-labelledby="{{ $headingId }}"
+    @elseif ($hasHeading)
+        aria-label="{{ trim(strip_tags($heading instanceof Htmlable ? $heading->toHtml() : $heading)) }}"
     @endif
     aria-modal="{{ $isClickThrough ? 'false' : 'true' }}"
     id="{{ $id }}"
-    role="dialog"
+    role="{{ $alert ? 'alertdialog' : 'dialog' }}"
+    tabindex="-1"
     x-data="filamentModal({
                 id: @js($id),
                 isScrollLocked: @js(! $isClickThrough),
@@ -184,7 +198,11 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->merge([
+                    // When `Escape` does not close the modal, the close button stays in the tab order as the only keyboard way to dismiss it, so the window takes the focus trap's `[autofocus]` to stop the button from being autofocused when the modal opens.
+                    'autofocus' => $closeButton && (! $closeByEscaping) && ($heading || $header),
+                    'tabindex' => ($closeButton && (! $closeByEscaping) && ($heading || $header)) ? '-1' : null,
+                ])->class([
                     'fi-modal-window',
                     'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
@@ -207,13 +225,14 @@
                     ])
                 >
                     @if ($closeButton)
+                        {{-- The close button is removed from the tab order when `Escape` also closes the modal, so it can sit first in the focus trap without being autofocused when the modal opens. When `Escape` does not close the modal, the button is the only keyboard way to dismiss it, so it stays in the tab order and the modal window is autofocused instead. --}}
                         <x-filament::icon-button
                             color="gray"
                             :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
                             :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
-                            tabindex="-1"
+                            :tabindex="$closeByEscaping ? '-1' : null"
                             :x-on:click="$closeEventHandler"
                             class="fi-modal-close-btn"
                         />
@@ -233,12 +252,22 @@
                         @endif
 
                         <div>
-                            <h2 class="fi-modal-heading">
+                            <h2
+                                @if ($headingId)
+                                    id="{{ $headingId }}"
+                                @endif
+                                class="fi-modal-heading"
+                            >
                                 {{ $heading }}
                             </h2>
 
                             @if ($hasDescription)
-                                <p class="fi-modal-description">
+                                <p
+                                    @if ($descriptionId)
+                                        id="{{ $descriptionId }}"
+                                    @endif
+                                    class="fi-modal-description"
+                                >
                                     {{ $description }}
                                 </p>
                             @endif
