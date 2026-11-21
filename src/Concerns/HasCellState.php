@@ -275,7 +275,7 @@ trait HasCellState
         } else {
             $name = $this->getName();
 
-            if (! str($name)->contains('.')) {
+            if (! str_contains($name, '.')) {
                 return null;
             }
 
@@ -660,6 +660,10 @@ trait HasCellState
         }
 
         if ($this instanceof Column) {
+            if ($this->cachedStateCacheKey !== null) {
+                return $this->cachedStateCacheKey;
+            }
+
             if (
                 ($record instanceof Model) &&
                 blank($record->getKey()) &&
